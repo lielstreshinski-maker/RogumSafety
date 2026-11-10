@@ -1,37 +1,33 @@
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
+    "use strict";
 
-    // =========================================
-    // 1. SCREEN ELEMENTS
-    // =========================================
+    // ==========================================
+    // ROGUM SAFETY — GAME CONTROLLER
+    // Complete replacement for script.js
+    // ==========================================
 
-    const screenMap = {
-        welcome: document.getElementById("welcomeScreen"),
-        intro: document.getElementById("introScreen"),
-        preparation: document.getElementById("preparationScreen"),
-        game: document.getElementById("gameScreen"),
-        transition: document.getElementById("gameTransitionScreen"),
-        assessment: document.getElementById("assessmentScreen"),
-        completion: document.getElementById("completionScreen")
+    const $ = (id) => document.getElementById(id);
+
+    const screens = {
+        welcome: $("welcomeScreen"),
+        intro: $("introScreen"),
+        preparation: $("preparationScreen"),
+        game: $("gameScreen"),
+        transition: $("gameTransitionScreen"),
+        assessment: $("assessmentScreen"),
+        completion: $("completionScreen")
     };
 
-    const screenTitles = {
-        welcome: document.getElementById("welcome-title"),
-        intro: document.getElementById("intro-title"),
-        preparation: document.getElementById("preparation-title"),
-        game: document.getElementById("game-title"),
-        transition: document.getElementById("transition-title"),
-        assessment: document.getElementById("assessment-title"),
-        completion: document.getElementById("completion-title")
+    const titles = {
+        welcome: $("welcome-title"),
+        intro: $("intro-title"),
+        preparation: $("preparation-title"),
+        game: $("game-title"),
+        transition: $("transition-title"),
+        assessment: $("assessment-title"),
+        completion: $("completion-title")
     };
-
-    // =========================================
-    // 2. GUIDED NAVIGATION
-    // =========================================
-
-    const navToggleBtn = document.getElementById("navToggleBtn");
-    const mainNavigation = document.getElementById("mainNavigation");
-    const navStepButtons = document.querySelectorAll(".nav-step");
 
     const navigationOrder = [
         "welcome",
@@ -41,235 +37,44 @@ document.addEventListener("DOMContentLoaded", function () {
         "assessment"
     ];
 
-    let highestUnlockedStep = 0;
-    let currentScreenName = "welcome";
-    let assessmentVisited = false;
-    let assessmentCompleted = false;
+    const navToggle = $("navToggleBtn");
+    const navigation = $("mainNavigation");
+    const navButtons = [...document.querySelectorAll(".nav-step")];
 
-    function getNavigationIndex(screenName) {
-        if (screenName === "transition" || screenName === "completion") {
-            return 4;
-        }
+    const roomButtons = [...document.querySelectorAll(".room-object")];
 
-        return navigationOrder.indexOf(screenName);
-    }
+    const overlay = $("feedbackOverlay");
+    const feedbackTitle = $("feedbackTitle");
+    const feedbackTag = $("feedbackTag");
+    const feedbackSticker = $("feedbackSticker");
+    const feedbackDescription = $("feedbackDescription");
+    const questionArea = $("questionArea");
+    const answerOptions = $("answerOptions");
+    const answerResult = $("answerResult");
+    const feedbackContinue = $("feedbackContinueBtn");
+    const feedbackClose = $("closeFeedbackBtn");
 
-    function updateNavigation() {
-        const activeIndex = getNavigationIndex(currentScreenName);
+    const hazardCounter = $("hazardCounter");
+    const hazardProgress = $("hazardProgress");
+    const scoreCounter = $("scoreCounter");
+    const transitionScore = $("transitionScore");
+    const completionScore = $("completionScore");
 
-        navStepButtons.forEach(function (button) {
-            const stepName = button.dataset.navStep;
-            const stepIndex = navigationOrder.indexOf(stepName);
-            const isUnlocked = stepIndex <= highestUnlockedStep;
-            const isActive = stepIndex === activeIndex;
+    const assessmentForm = $("assessmentForm");
+    const assessmentSummary = $("assessmentSummary");
+    const question3Input = $("question3");
+    const checkAssessment = $("checkAssessmentBtn");
+    const finishAssessment = $("finishAssessmentBtn");
 
-            button.disabled = !isUnlocked;
-            button.classList.toggle("locked", !isUnlocked);
-            button.classList.toggle("active", isActive);
+    const questionFeedback = [
+        $("question1Feedback"),
+        $("question2Feedback"),
+        $("question3Feedback")
+    ];
 
-            if (isActive) {
-                button.setAttribute("aria-current", "step");
-            } else {
-                button.removeAttribute("aria-current");
-            }
-
-            const lockIcon = button.querySelector(".nav-lock");
-
-            if (lockIcon) {
-                lockIcon.hidden = isUnlocked;
-            }
-
-            const label = button.querySelector(".nav-step-label");
-
-            if (label) {
-                const labelText = label.textContent.trim();
-
-                button.setAttribute(
-                    "aria-label",
-                    isUnlocked
-                        ? labelText
-                        : labelText + " - השלב עדיין נעול"
-                );
-            }
-        });
-    }
-
-    function unlockStep(screenName) {
-        const index = navigationOrder.indexOf(screenName);
-
-        if (index > highestUnlockedStep) {
-            highestUnlockedStep = index;
-        }
-
-        updateNavigation();
-    }
-
-    function closeMobileNavigation() {
-        mainNavigation.classList.remove("is-open");
-
-        navToggleBtn.setAttribute("aria-expanded", "false");
-        navToggleBtn.setAttribute(
-            "aria-label",
-            "פתיחת תפריט הניווט"
-        );
-
-        const icon = navToggleBtn.querySelector(".nav-toggle-icon");
-
-        if (icon) {
-            icon.textContent = "☰";
-        }
-    }
-
-    function showScreen(screenName) {
-        const screen = screenMap[screenName];
-
-        if (!screen) {
-            return;
-        }
-
-        Object.values(screenMap).forEach(function (item) {
-            item.hidden = true;
-        });
-
-        screen.hidden = false;
-        currentScreenName = screenName;
-
-        if (screenName === "assessment") {
-            assessmentVisited = true;
-        }
-
-        updateNavigation();
-        closeMobileNavigation();
-
-        window.scrollTo(0, 0);
-
-        const title = screenTitles[screenName];
-
-        if (title) {
-            title.focus();
-        }
-    }
-
-    navToggleBtn.addEventListener("click", function () {
-        const isOpen = mainNavigation.classList.toggle("is-open");
-
-        navToggleBtn.setAttribute(
-            "aria-expanded",
-            String(isOpen)
-        );
-
-        navToggleBtn.setAttribute(
-            "aria-label",
-            isOpen
-                ? "סגירת תפריט הניווט"
-                : "פתיחת תפריט הניווט"
-        );
-
-        const icon = navToggleBtn.querySelector(".nav-toggle-icon");
-
-        if (icon) {
-            icon.textContent = isOpen ? "✕" : "☰";
-        }
-    });
-
-    document.addEventListener("keydown", function (event) {
-        if (
-            event.key === "Escape" &&
-            mainNavigation.classList.contains("is-open")
-        ) {
-            closeMobileNavigation();
-            navToggleBtn.focus();
-        }
-    });
-
-    // Navigate only to unlocked learning stages.
-    navStepButtons.forEach(function (button) {
-        button.addEventListener("click", function () {
-            const target = button.dataset.navStep;
-            const targetIndex = navigationOrder.indexOf(target);
-
-            if (
-                targetIndex < 0 ||
-                targetIndex > highestUnlockedStep
-            ) {
-                return;
-            }
-
-            if (target === "assessment") {
-                if (assessmentCompleted) {
-                    showScreen("completion");
-                } else if (assessmentVisited) {
-                    showScreen("assessment");
-                } else {
-                    showScreen("transition");
-                }
-
-                return;
-            }
-
-            showScreen(target);
-        });
-    });
-
-    // =========================================
-    // 3. BASIC NAVIGATION BUTTONS
-    // =========================================
-
-    const startBtn = document.getElementById("startBtn");
-    const continueBtn = document.getElementById("continueBtn");
-    const backBtn = document.getElementById("backBtn");
-    const practiceBtn = document.getElementById("practiceBtn");
-
-    const backToIntroBtn = document.getElementById("backToIntroBtn");
-    const backToPreparationBtn = document.getElementById("backToPreparationBtn");
-
-    const continueToAssessmentBtn =
-        document.getElementById("continueToAssessmentBtn");
-
-    startBtn.addEventListener("click", function () {
-        unlockStep("intro");
-        showScreen("intro");
-    });
-
-    continueBtn.addEventListener("click", function () {
-        unlockStep("preparation");
-        showScreen("preparation");
-    });
-
-    backBtn.addEventListener("click", function () {
-        showScreen("welcome");
-    });
-
-    backToIntroBtn.addEventListener("click", function () {
-        showScreen("intro");
-    });
-
-    practiceBtn.addEventListener("click", function () {
-        // Preserve the current game when returning to this screen.
-        if (!gameStarted) {
-            resetGame();
-            gameStarted = true;
-        }
-
-        unlockStep("game");
-        showScreen("game");
-    });
-
-    backToPreparationBtn.addEventListener("click", function () {
-        showScreen("preparation");
-    });
-
-    continueToAssessmentBtn.addEventListener("click", function () {
-        if (foundHazards.length !== totalHazards) {
-            return;
-        }
-
-        showScreen("assessment");
-    });
-
-    // =========================================
-    // 4. GAME CONTENT
-    // =========================================
+    // ==========================================
+    // GAME CONTENT
+    // ==========================================
 
     const objects = {
         cable: {
@@ -283,9 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "למשוך את הכבל במהירות"
             ],
             correct: 1,
-            explanation:
-                "נכון מאוד! מרחיקים את המשתתפים מהסכנה " +
-                "ומדווחים לרכז כדי שהכבל יטופל בבטחה."
+            explanation: "מרחיקים את המשתתפים מהסכנה ומדווחים לרכז כדי שהכבל יטופל בבטחה."
         },
 
         water: {
@@ -299,9 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "להרחיק משתתפים ולדאוג לטיפול במפגע"
             ],
             correct: 2,
-            explanation:
-                "מצוין! יש למנוע גישה לאזור הרטוב " +
-                "ולדאוג לטיפול בו לפני המשך הפעילות."
+            explanation: "יש למנוע גישה לאזור הרטוב ולדאוג לטיפול בו לפני המשך הפעילות."
         },
 
         bag: {
@@ -315,443 +116,537 @@ document.addEventListener("DOMContentLoaded", function () {
                 "לבקש מהחניכים לדלג מעליו"
             ],
             correct: 0,
-            explanation:
-                "כל הכבוד! מעברים צריכים להישאר פנויים. " +
-                "יש לדאוג לפינוי התיק בצורה בטוחה."
+            explanation: "מעברים צריכים להישאר פנויים. יש לדאוג לפינוי התיק בצורה בטוחה."
         },
 
         scissors: {
             title: "מספריים על השולחן",
             sticker: "assets/images/stickers/scissors.png",
             hazard: true,
-            description:
-                "מספריים פתוחים הושארו על שולחן הפעילות ללא השגחה.",
+            description: "מספריים פתוחים הושארו על שולחן הפעילות ללא השגחה.",
             answers: [
                 "להשאיר אותם על השולחן",
                 "לזרוק אותם לרצפה",
                 "לדאוג לאחסון סגור ובטוח לפי נהלי המרכז"
             ],
             correct: 2,
-            explanation:
-                "נכון מאוד! ציוד חד צריך להיות מאוחסן בבטחה " +
-                "כדי למנוע פציעות."
+            explanation: "ציוד חד צריך להיות מאוחסן בבטחה כדי למנוע פציעות."
         },
 
         ball: {
             title: "כדור באזור המשחק",
             sticker: "assets/images/stickers/ball.png",
             hazard: false,
-            description:
-                "הכדור מונח באזור המשחק המיועד, ואינו חוסם מעבר.",
-            explanation:
-                "יפה שבדקתם! במיקום הנוכחי הכדור אינו מפגע. " +
-                "אם הוא יתגלגל למעבר, נצטרך לפנות אותו."
+            description: "הכדור מונח באזור המשחק המיועד, ואינו חוסם מעבר.",
+            explanation: "במיקום הנוכחי הכדור אינו מפגע. אם הוא יתגלגל למעבר, נצטרך לפנות אותו."
         },
 
         plant: {
             title: "עציץ בפינת החדר",
             sticker: "assets/images/stickers/plant.png",
             hazard: false,
-            description:
-                "העציץ יציב, נמצא בפינת החדר ואינו מפריע לתנועה.",
-            explanation:
-                "נכון לעכשיו אין כאן מפגע. חשוב לוודא " +
-                "שהעציץ יציב ואינו חוסם מעבר."
+            description: "העציץ יציב, נמצא בפינת החדר ואינו מפריע לתנועה.",
+            explanation: "אין כאן מפגע כרגע. חשוב לוודא שהעציץ יציב ואינו חוסם מעבר."
         },
 
         books: {
             title: "ספרים על המדף",
             sticker: "assets/images/stickers/books.png",
             hazard: false,
-            description:
-                "הספרים מסודרים על המדף ואינם עומדים ליפול.",
-            explanation:
-                "מעולה! ציוד שמאוחסן בצורה מסודרת ויציבה " +
-                "מסייע לשמור על חדר בטוח."
+            description: "הספרים מסודרים על המדף ואינם עומדים ליפול.",
+            explanation: "ציוד שמאוחסן בצורה מסודרת ויציבה מסייע לשמור על חדר בטוח."
         },
 
         pencils: {
             title: "כלי כתיבה על השולחן",
             sticker: "assets/images/stickers/pencils.png",
             hazard: false,
-            description:
-                "כלי הכתיבה נמצאים על שולחן הפעילות באופן מסודר.",
-            explanation:
-                "יפה! כלי הכתיבה אינם מהווים מפגע במצבם הנוכחי. " +
-                "חשוב להחזיר אותם למקום בסיום השימוש."
+            description: "כלי הכתיבה נמצאים על שולחן הפעילות באופן מסודר.",
+            explanation: "כלי הכתיבה אינם מפגע במצבם הנוכחי. חשוב להחזיר אותם למקום בסיום השימוש."
         }
     };
 
-    // =========================================
-    // 5. GAME ELEMENTS AND STATE
-    // =========================================
-
-    const objectButtons = document.querySelectorAll(".room-object");
-
-    const hazardCounter = document.getElementById("hazardCounter");
-    const hazardProgress = document.getElementById("hazardProgress");
-    const scoreCounter = document.getElementById("scoreCounter");
-
-    const feedbackOverlay = document.getElementById("feedbackOverlay");
-    const feedbackTitle = document.getElementById("feedbackTitle");
-    const feedbackTag = document.getElementById("feedbackTag");
-    const feedbackSticker = document.getElementById("feedbackSticker");
-    const feedbackDescription = document.getElementById("feedbackDescription");
-
-    const questionArea = document.getElementById("questionArea");
-    const answerOptions = document.getElementById("answerOptions");
-    const answerResult = document.getElementById("answerResult");
-
-    const feedbackContinueBtn =
-        document.getElementById("feedbackContinueBtn");
-
-    const closeFeedbackBtn =
-        document.getElementById("closeFeedbackBtn");
-
-    const transitionScore = document.getElementById("transitionScore");
-    const completionScore = document.getElementById("completionScore");
-    const restartBtn = document.getElementById("restartBtn");
-
     const totalHazards = 4;
 
-    let foundHazards = [];
-    let score = 0;
-    let currentObjectId = "";
-    let currentButton = null;
-    let lastFocusedButton = null;
-    let wrongAttempt = false;
-    let gameStarted = false;
+    const state = {
+        screen: "welcome",
+        highestUnlocked: 0,
+        gameStarted: false,
+        found: new Set(),
+        score: 0,
+        currentObject: null,
+        currentButton: null,
+        previousFocus: null,
+        wrongAttempt: false,
+        assessmentVisited: false,
+        assessmentCompleted: false
+    };
 
-    function updateProgress() {
-        const count = foundHazards.length;
-        const percentage = count / totalHazards * 100;
+    // ==========================================
+    // ACCESSIBILITY HELPERS
+    // ==========================================
 
-        hazardCounter.textContent = count + " מתוך " + totalHazards;
-        hazardProgress.style.width = percentage + "%";
-        hazardProgress.setAttribute("aria-valuenow", count);
-        scoreCounter.textContent = score;
+    function focusWithoutScroll(element) {
+        if (!element) return;
+
+        element.focus({
+            preventScroll: true
+        });
     }
 
-    // =========================================
-    // 6. GAME FEEDBACK DIALOG
-    // =========================================
+    function visibleFocusableElements(container) {
+        return [...container.querySelectorAll(
+            'button:not([disabled]), input:not([disabled]), ' +
+            'select:not([disabled]), textarea:not([disabled]), ' +
+            'a[href], [tabindex]:not([tabindex="-1"])'
+        )].filter((element) => {
+            return !element.hidden &&
+                element.getClientRects().length > 0;
+        });
+    }
 
-    function showFeedbackSticker(objectData) {
-        feedbackSticker.textContent = "";
+    function setText(element, value) {
+        if (element) {
+            element.textContent = value;
+        }
+    }
 
-        const stickerImage = document.createElement("img");
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
 
-        stickerImage.src = objectData.sticker;
-        stickerImage.alt = "";
-        stickerImage.draggable = false;
+    function navigationIndex(screen) {
+        if (screen === "transition" || screen === "completion") {
+            return 4;
+        }
 
-        // Preserve the existing sticker appearance.
-        stickerImage.style.display = "block";
-        stickerImage.style.width = "110px";
-        stickerImage.style.height = "110px";
-        stickerImage.style.objectFit = "contain";
-        stickerImage.style.margin = "0 auto";
-        stickerImage.style.filter =
-            "drop-shadow(0 6px 5px rgba(41, 43, 64, 0.18))";
+        return navigationOrder.indexOf(screen);
+    }
 
-        feedbackSticker.appendChild(stickerImage);
+    function updateNavigation() {
+        const active = navigationIndex(state.screen);
+
+        navButtons.forEach((button) => {
+            const step = button.dataset.navStep;
+            const index = navigationOrder.indexOf(step);
+            const unlocked = index <= state.highestUnlocked;
+            const selected = index === active;
+
+            button.disabled = !unlocked;
+            button.classList.toggle("locked", !unlocked);
+            button.classList.toggle("active", selected);
+
+            if (selected) {
+                button.setAttribute("aria-current", "step");
+            } else {
+                button.removeAttribute("aria-current");
+            }
+
+            const lock = button.querySelector(".nav-lock");
+            if (lock) lock.hidden = unlocked;
+
+            const label = button.querySelector(".nav-step-label");
+
+            if (label) {
+                const text = label.textContent.trim();
+
+                button.setAttribute(
+                    "aria-label",
+                    unlocked ? text : `${text} - השלב עדיין נעול`
+                );
+            }
+        });
+    }
+
+    function unlock(screen) {
+        const index = navigationOrder.indexOf(screen);
+
+        if (index > state.highestUnlocked) {
+            state.highestUnlocked = index;
+        }
+
+        updateNavigation();
+    }
+
+    function closeNavigation() {
+        if (!navigation || !navToggle) return;
+
+        navigation.classList.remove("is-open");
+        navToggle.setAttribute("aria-expanded", "false");
+        navToggle.setAttribute(
+            "aria-label",
+            "פתיחת תפריט הניווט"
+        );
+
+        const icon = navToggle.querySelector(".nav-toggle-icon");
+        if (icon) icon.textContent = "☰";
+    }
+
+    function showScreen(name) {
+        const target = screens[name];
+        if (!target) return;
+
+        Object.values(screens).forEach((screen) => {
+            if (screen) screen.hidden = true;
+        });
+
+        target.hidden = false;
+        state.screen = name;
+
+        if (name === "assessment") {
+            state.assessmentVisited = true;
+        }
+
+        updateNavigation();
+        closeNavigation();
+
+        // Scroll only when intentionally changing screens.
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "instant"
+        });
+
+        focusWithoutScroll(titles[name]);
+    }
+
+    navToggle?.addEventListener("click", () => {
+        const open = navigation.classList.toggle("is-open");
+
+        navToggle.setAttribute("aria-expanded", String(open));
+        navToggle.setAttribute(
+            "aria-label",
+            open ? "סגירת תפריט הניווט" : "פתיחת תפריט הניווט"
+        );
+
+        const icon = navToggle.querySelector(".nav-toggle-icon");
+        if (icon) icon.textContent = open ? "✕" : "☰";
+    });
+
+    navButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const target = button.dataset.navStep;
+            const index = navigationOrder.indexOf(target);
+
+            if (index < 0 || index > state.highestUnlocked) {
+                return;
+            }
+
+            if (target === "assessment") {
+                if (state.assessmentCompleted) {
+                    showScreen("completion");
+                } else if (state.assessmentVisited) {
+                    showScreen("assessment");
+                } else {
+                    showScreen("transition");
+                }
+                return;
+            }
+
+            showScreen(target);
+        });
+    });
+
+    // ==========================================
+    // BASIC SCREEN BUTTONS
+    // ==========================================
+
+    $("startBtn")?.addEventListener("click", () => {
+        unlock("intro");
+        showScreen("intro");
+    });
+
+    $("continueBtn")?.addEventListener("click", () => {
+        unlock("preparation");
+        showScreen("preparation");
+    });
+
+    $("backBtn")?.addEventListener("click", () => {
+        showScreen("welcome");
+    });
+
+    $("backToIntroBtn")?.addEventListener("click", () => {
+        showScreen("intro");
+    });
+
+    $("practiceBtn")?.addEventListener("click", () => {
+        if (!state.gameStarted) {
+            resetGame();
+            state.gameStarted = true;
+        }
+
+        unlock("game");
+        showScreen("game");
+    });
+
+    $("backToPreparationBtn")?.addEventListener("click", () => {
+        showScreen("preparation");
+    });
+
+    $("continueToAssessmentBtn")?.addEventListener("click", () => {
+        if (state.found.size !== totalHazards) return;
+        showScreen("assessment");
+    });
+
+    // ==========================================
+    // GAME PROGRESS
+    // ==========================================
+
+    function updateProgress() {
+        const found = state.found.size;
+        const percentage = found / totalHazards * 100;
+
+        setText(hazardCounter, `${found} מתוך ${totalHazards}`);
+        setText(scoreCounter, state.score);
+
+        if (hazardProgress) {
+            hazardProgress.style.width = `${percentage}%`;
+            hazardProgress.setAttribute("aria-valuenow", found);
+        }
+    }
+
+    // ==========================================
+    // FEEDBACK MODAL
+    // ==========================================
+
+    function renderSticker(data) {
+        feedbackSticker.replaceChildren();
+
+        const image = document.createElement("img");
+        image.src = data.sticker;
+        image.alt = "";
+        image.draggable = false;
+        image.className = "feedback-object-image";
+
+        feedbackSticker.appendChild(image);
+    }
+
+    function setAnswerResult(message, type = "success") {
+        answerResult.textContent = message;
+        answerResult.hidden = false;
+
+        answerResult.classList.toggle("error", type === "error");
+        answerResult.setAttribute("role", "status");
+        answerResult.setAttribute("aria-live", "polite");
     }
 
     function openFeedback(objectId, button) {
-        const objectData = objects[objectId];
+        const data = objects[objectId];
 
-        currentObjectId = objectId;
-        currentButton = button;
-        lastFocusedButton = button;
-        wrongAttempt = false;
+        if (!data || state.found.has(objectId)) return;
 
-        showFeedbackSticker(objectData);
+        state.currentObject = objectId;
+        state.currentButton = button;
+        state.previousFocus = document.activeElement;
+        state.wrongAttempt = false;
 
-        feedbackTitle.textContent = objectData.title;
-        feedbackDescription.textContent = objectData.description;
+        renderSticker(data);
 
-        answerOptions.textContent = "";
+        setText(feedbackTitle, data.title);
+        setText(feedbackDescription, data.description);
+
+        answerOptions.replaceChildren();
         answerResult.textContent = "";
         answerResult.hidden = true;
         answerResult.classList.remove("error");
 
-        feedbackContinueBtn.hidden = true;
-        feedbackContinueBtn.textContent = "ממשיכים לחפש ←";
+        feedbackContinue.hidden = true;
+        feedbackContinue.textContent = "ממשיכים לחפש ←";
 
-        if (objectData.hazard) {
-            feedbackTag.textContent = "⚠️ זיהיתם מפגע";
+        if (data.hazard) {
+            setText(feedbackTag, "זיהיתם מפגע");
             questionArea.hidden = false;
 
-            objectData.answers.forEach(function (answer, index) {
-                const answerButton = document.createElement("button");
+            data.answers.forEach((answer, index) => {
+                const option = document.createElement("button");
 
-                answerButton.type = "button";
-                answerButton.className = "answer-button";
-                answerButton.textContent = answer;
+                option.type = "button";
+                option.className = "answer-button";
+                option.textContent = answer;
 
-                answerButton.addEventListener("click", function () {
-                    checkAnswer(index, answerButton);
+                option.addEventListener("click", () => {
+                    checkAnswer(index, option);
                 });
 
-                answerOptions.appendChild(answerButton);
+                answerOptions.appendChild(option);
             });
 
         } else {
-            feedbackTag.textContent = "✓ בדיקת חפץ בטוח";
+            setText(feedbackTag, "בדיקת חפץ בטוח");
             questionArea.hidden = true;
 
-            answerResult.textContent = objectData.explanation;
-            answerResult.hidden = false;
-            feedbackContinueBtn.hidden = false;
+            setAnswerResult(data.explanation);
+            feedbackContinue.hidden = false;
         }
 
-        feedbackOverlay.hidden = false;
+        overlay.hidden = false;
         document.body.classList.add("dialog-open");
-        feedbackTitle.focus();
+
+        // Prevent the background from jumping when dialog opens.
+        focusWithoutScroll(feedbackTitle);
     }
 
-    function animateAnswer(button, correct) {
-        button.style.transition =
-            "transform 0.2s ease, background-color 0.2s ease";
+    function checkAnswer(index, selectedButton) {
+        const id = state.currentObject;
+        const data = objects[id];
 
-        button.style.transform = correct
-            ? "scale(1.03)"
-            : "translateX(5px)";
-    }
+        if (!data || !data.hazard) return;
 
-    // =========================================
-    // 7. CHECK GAME ANSWERS
-    // =========================================
-
-    function checkAnswer(answerIndex, selectedButton) {
-        const objectData = objects[currentObjectId];
-
-        if (answerIndex === objectData.correct) {
-            selectedButton.classList.add("correct");
-            animateAnswer(selectedButton, true);
-
-            const buttons = answerOptions.querySelectorAll("button");
-
-            buttons.forEach(function (button) {
-                button.disabled = true;
-            });
-
-            if (!foundHazards.includes(currentObjectId)) {
-                foundHazards.push(currentObjectId);
-                score += wrongAttempt ? 5 : 10;
-            }
-
-            currentButton.classList.add("found");
-
-            const originalLabel =
-                currentButton.getAttribute("data-original-label");
-
-            currentButton.setAttribute(
-                "aria-label",
-                originalLabel + " - טופל"
-            );
-
-            answerResult.textContent =
-                "✓ " + objectData.explanation +
-                " +" + (wrongAttempt ? 5 : 10) +
-                " נקודות!";
-
-            answerResult.classList.remove("error");
-            answerResult.hidden = false;
-
-            feedbackTag.textContent = "🌟 המפגע טופל בהצלחה!";
-            feedbackContinueBtn.hidden = false;
-
-            if (foundHazards.length === totalHazards) {
-                feedbackContinueBtn.textContent =
-                    "מסיימים את משימת החדר ←";
-            }
-
-            updateProgress();
-            feedbackContinueBtn.focus();
-
-        } else {
-            wrongAttempt = true;
+        if (index !== data.correct) {
+            state.wrongAttempt = true;
 
             selectedButton.classList.add("wrong");
             selectedButton.disabled = true;
-            animateAnswer(selectedButton, false);
 
-            answerResult.textContent =
-                "לא בדיוק. חשבו כיצד אפשר למנוע פגיעה " +
-                "ולשמור על המשתתפים. נסו שוב.";
+            setAnswerResult(
+                "לא בדיוק. חשבו כיצד אפשר למנוע פגיעה ולשמור על המשתתפים. נסו שוב.",
+                "error"
+            );
 
-            answerResult.classList.add("error");
-            answerResult.hidden = false;
-        }
-    }
-
-    function hideHandledObject(button) {
-        if (!button) {
             return;
         }
 
-        button.style.transition =
-            "opacity 0.4s ease, transform 0.4s ease";
+        selectedButton.classList.add("correct");
 
-        button.style.opacity = "0";
-        button.style.transform = "scale(0.3)";
-        button.style.pointerEvents = "none";
+        answerOptions.querySelectorAll("button").forEach((button) => {
+            button.disabled = true;
+        });
 
+        const earned = state.wrongAttempt ? 5 : 10;
+
+        if (!state.found.has(id)) {
+            state.found.add(id);
+            state.score += earned;
+        }
+
+        if (state.currentButton) {
+            state.currentButton.classList.add("found");
+
+            const original = state.currentButton.dataset.originalLabel ||
+                state.currentButton.getAttribute("aria-label") ||
+                data.title;
+
+            state.currentButton.setAttribute(
+                "aria-label",
+                `${original} - טופל`
+            );
+        }
+
+        setText(feedbackTag, "המפגע טופל בהצלחה");
+
+        setAnswerResult(
+            `${data.explanation} נוספו ${earned} נקודות!`
+        );
+
+        feedbackContinue.hidden = false;
+
+        if (state.found.size === totalHazards) {
+            feedbackContinue.textContent = "מסיימים את משימת החדר ←";
+        }
+
+        updateProgress();
+        focusWithoutScroll(feedbackContinue);
+    }
+
+    function hideHandledObject(button) {
+        if (!button) return;
+
+        button.classList.add("found", "is-handled");
         button.disabled = true;
         button.setAttribute("aria-hidden", "true");
     }
 
     function closeFeedback() {
-        if (feedbackOverlay.hidden) {
-            return;
-        }
+        if (overlay.hidden) return;
 
-        const handledCurrentHazard =
-            foundHazards.includes(currentObjectId);
+        const handled = state.found.has(state.currentObject);
+        const previous = state.previousFocus;
 
-        feedbackOverlay.hidden = true;
+        overlay.hidden = true;
         document.body.classList.remove("dialog-open");
 
-        if (handledCurrentHazard) {
-            hideHandledObject(currentButton);
+        if (handled) {
+            hideHandledObject(state.currentButton);
         }
 
-        if (foundHazards.length === totalHazards) {
-            currentObjectId = "";
-            currentButton = null;
+        state.currentObject = null;
+        state.currentButton = null;
+        state.previousFocus = null;
 
-            transitionScore.textContent = score;
-
-            unlockStep("assessment");
+        if (state.found.size === totalHazards) {
+            setText(transitionScore, state.score);
+            unlock("assessment");
             showScreen("transition");
             return;
         }
 
-        if (lastFocusedButton) {
-            if (lastFocusedButton.disabled) {
-                screenTitles.game.focus();
-            } else {
-                lastFocusedButton.focus();
-            }
+        // Restore focus without scrolling the room to the top.
+        if (previous && !previous.disabled && previous.isConnected) {
+            focusWithoutScroll(previous);
+        } else {
+            focusWithoutScroll(titles.game);
         }
-
-        currentObjectId = "";
-        currentButton = null;
     }
 
-    // =========================================
-    // 8. ROOM OBJECT EVENTS
-    // =========================================
+    roomButtons.forEach((button) => {
+        const original = button.getAttribute("aria-label") || "";
+        button.dataset.originalLabel = original;
 
-    objectButtons.forEach(function (button) {
-        button.setAttribute(
-            "data-original-label",
-            button.getAttribute("aria-label")
-        );
-
-        button.addEventListener("click", function () {
-            const objectId = button.dataset.object;
-
-            if (foundHazards.includes(objectId)) {
-                return;
-            }
-
-            openFeedback(objectId, button);
+        button.addEventListener("click", () => {
+            openFeedback(button.dataset.object, button);
         });
     });
 
-    feedbackContinueBtn.addEventListener("click", closeFeedback);
-    closeFeedbackBtn.addEventListener("click", closeFeedback);
+    feedbackContinue?.addEventListener("click", closeFeedback);
+    feedbackClose?.addEventListener("click", closeFeedback);
 
-    // =========================================
-    // 9. MODAL KEYBOARD ACCESSIBILITY
-    // =========================================
+    // ==========================================
+    // KEYBOARD ACCESSIBILITY
+    // ==========================================
 
-    feedbackOverlay.addEventListener("keydown", function (event) {
+    document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
-            event.preventDefault();
-            closeFeedback();
-            return;
-        }
-
-        if (event.key !== "Tab") {
-            return;
-        }
-
-        const focusable = feedbackOverlay.querySelectorAll(
-            "button:not([disabled]):not([hidden])"
-        );
-
-        const available = [];
-
-        focusable.forEach(function (button) {
-            if (button.offsetParent !== null) {
-                available.push(button);
+            if (overlay && !overlay.hidden) {
+                event.preventDefault();
+                closeFeedback();
+                return;
             }
-        });
 
-        if (available.length === 0) {
-            return;
+            if (navigation?.classList.contains("is-open")) {
+                closeNavigation();
+                focusWithoutScroll(navToggle);
+            }
         }
+    });
 
-        const first = available[0];
-        const last = available[available.length - 1];
+    overlay?.addEventListener("keydown", (event) => {
+        if (event.key !== "Tab") return;
 
-        if (
-            event.shiftKey &&
-            document.activeElement === first
-        ) {
+        const focusable = visibleFocusableElements(overlay);
+        if (!focusable.length) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
             event.preventDefault();
-            last.focus();
-
+            focusWithoutScroll(last);
         } else if (
             !event.shiftKey &&
             document.activeElement === last
         ) {
             event.preventDefault();
-            first.focus();
+            focusWithoutScroll(first);
         }
     });
 
-    // =========================================
-    // 10. FINAL ASSESSMENT ELEMENTS
-    // =========================================
-
-    const assessmentForm = document.getElementById("assessmentForm");
-    const assessmentSummary = document.getElementById("assessmentSummary");
-
-    const question1Feedback =
-        document.getElementById("question1Feedback");
-
-    const question2Feedback =
-        document.getElementById("question2Feedback");
-
-    const question3Feedback =
-        document.getElementById("question3Feedback");
-
-    const question3Input = document.getElementById("question3");
-
-    const checkAssessmentBtn =
-        document.getElementById("checkAssessmentBtn");
-
-    const finishAssessmentBtn =
-        document.getElementById("finishAssessmentBtn");
-
-    const backToGameBtn =
-        document.getElementById("backToGameBtn");
-
-    const assessmentFeedbackElements = [
-        question1Feedback,
-        question2Feedback,
-        question3Feedback
-    ];
-
-    // =========================================
-    // 11. ASSESSMENT FEEDBACK HELPERS
-    // =========================================
+    // ==========================================
+    // ASSESSMENT HELPERS
+    // ==========================================
 
     function setQuestionFeedback(element, type, message) {
+        if (!element) return;
+
         element.textContent = message;
         element.hidden = false;
 
@@ -763,10 +658,13 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         element.classList.add(type);
+        element.setAttribute("role", "status");
     }
 
     function clearAssessmentFeedback() {
-        assessmentFeedbackElements.forEach(function (element) {
+        questionFeedback.forEach((element) => {
+            if (!element) return;
+
             element.hidden = true;
             element.textContent = "";
 
@@ -782,219 +680,180 @@ document.addEventListener("DOMContentLoaded", function () {
         assessmentSummary.textContent = "";
         assessmentSummary.classList.remove("all-correct");
 
-        finishAssessmentBtn.hidden = true;
-        checkAssessmentBtn.hidden = false;
-        assessmentCompleted = false;
+        finishAssessment.hidden = true;
+        checkAssessment.hidden = false;
+
+        state.assessmentCompleted = false;
     }
 
-    // =========================================
-    // 12. CHECK FINAL ASSESSMENT
-    // =========================================
+    // ==========================================
+    // FINAL ASSESSMENT
+    // ==========================================
 
-    assessmentForm.addEventListener("submit", function (event) {
+    assessmentForm?.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const selectedQ1 = assessmentForm.querySelector(
             'input[name="question1"]:checked'
         );
 
-        const selectedQ2 = assessmentForm.querySelectorAll(
-            'input[name="question2"]:checked'
-        );
+        const selectedQ2 = [
+            ...assessmentForm.querySelectorAll(
+                'input[name="question2"]:checked'
+            )
+        ].map((input) => input.value);
 
-        const q3Value = question3Input.value.trim();
+        const q3 = question3Input.value.trim();
 
         let correctCount = 0;
         let missingCount = 0;
 
-        // -------------------------------------
-        // Question 1: Single choice
-        // -------------------------------------
+        // Question 1 — single choice
 
         if (!selectedQ1) {
             missingCount++;
 
             setQuestionFeedback(
-                question1Feedback,
+                questionFeedback[0],
                 "missing",
-                "⚠️ עדיין לא בחרתם תשובה לשאלה הזאת."
+                "עדיין לא בחרתם תשובה לשאלה הזאת."
             );
 
         } else if (selectedQ1.value === "b") {
             correctCount++;
 
             setQuestionFeedback(
-                question1Feedback,
+                questionFeedback[0],
                 "correct",
-                "✓ נכון מאוד! ציוד שאינו תקין מוציאים משימוש, " +
-                "מונעים גישה אליו ומדווחים לרכז כדי שיטופל בבטחה. " +
-                "אין להשתמש בציוד עד לטיפול מתאים."
+                "נכון! ציוד שאינו תקין מוציאים משימוש, מונעים גישה אליו ומדווחים לרכז."
             );
 
         } else {
             setQuestionFeedback(
-                question1Feedback,
+                questionFeedback[0],
                 "incorrect",
-                "לא בדיוק. כאשר מזהים ציוד לא תקין, " +
-                "יש להוציא אותו משימוש ולדווח לרכז. " +
-                "לא ממשיכים להשתמש בו ולא מנסים לתקן אותו בעצמנו. " +
-                "נסו שוב."
+                "לא בדיוק. מוציאים ציוד לא תקין משימוש ומדווחים לרכז. אין לנסות לתקן אותו בעצמנו."
             );
         }
 
-        // -------------------------------------
-        // Question 2: Multiple choice
-        // -------------------------------------
+        // Question 2 — multiple choice
 
-        const selectedValues = Array.from(
-            selectedQ2,
-            function (input) {
-                return input.value;
-            }
-        );
+        const correctValues = ["stop", "move", "report"];
 
-        const correctValues = [
-            "stop",
-            "move",
-            "report"
-        ];
+        const correctSelections = selectedQ2.filter((value) => {
+            return correctValues.includes(value);
+        }).length;
 
-        let correctSelections = 0;
-        let incorrectSelections = 0;
+        const incorrectSelections = selectedQ2.filter((value) => {
+            return !correctValues.includes(value);
+        }).length;
 
-        selectedValues.forEach(function (value) {
-            if (correctValues.includes(value)) {
-                correctSelections++;
-            } else {
-                incorrectSelections++;
-            }
-        });
-
-        const q2IsCorrect =
+        const q2Correct =
             correctSelections === correctValues.length &&
             incorrectSelections === 0;
 
-        if (selectedValues.length === 0) {
+        if (selectedQ2.length === 0) {
             missingCount++;
 
             setQuestionFeedback(
-                question2Feedback,
+                questionFeedback[1],
                 "missing",
-                "⚠️ סמנו לפחות פעולה אחת לפני בדיקת התשובות."
+                "סמנו לפחות פעולה אחת לפני בדיקת התשובות."
             );
 
-        } else if (q2IsCorrect) {
+        } else if (q2Correct) {
             correctCount++;
 
             setQuestionFeedback(
-                question2Feedback,
+                questionFeedback[1],
                 "correct",
-                "✓ מצוין! עוצרים את הפעילות באזור המסוכן, " +
-                "מרחיקים את החניכים ומדווחים לרכז. " +
-                "לא מנסים לתקן את המדף בעצמנו."
+                "מצוין! עוצרים את הפעילות באזור המסוכן, מרחיקים את החניכים ומדווחים לרכז."
             );
 
         } else if (correctSelections > 0) {
             setQuestionFeedback(
-                question2Feedback,
+                questionFeedback[1],
                 "partial",
-                "כמעט! זיהיתם חלק מהפעולות הנכונות, " +
-                "אבל חסרה פעולה מתאימה או שסומנה גם פעולה " +
-                "לא בטוחה. חשבו על עצירה, הרחקה ודיווח, " +
-                "ובדקו את הבחירות שלכם."
+                "כמעט! בדקו אם בחרתם את כל הפעולות המתאימות ואם סימנתם פעולה שאינה בטוחה."
             );
 
         } else {
             setQuestionFeedback(
-                question2Feedback,
+                questionFeedback[1],
                 "incorrect",
-                "לא בדיוק. חשוב לעצור את הפעילות באזור, " +
-                "להרחיק את החניכים ולדווח לרכז. " +
-                "אין לבקש מחניך לתקן ציוד מסוכן."
+                "חשבו על שלוש הפעולות המרכזיות: עצירה, הרחקה ודיווח."
             );
         }
 
-        // -------------------------------------
-        // Question 3: Numeric input
-        // -------------------------------------
+        // Question 3 — numeric answer
 
-        if (q3Value === "") {
+        if (q3 === "") {
             missingCount++;
 
             setQuestionFeedback(
-                question3Feedback,
+                questionFeedback[2],
                 "missing",
-                "⚠️ הקלידו את מספר הפעולות המרכזיות."
+                "הקלידו את מספר הפעולות המרכזיות."
             );
 
         } else if (
             !question3Input.validity.valid ||
-            !Number.isInteger(Number(q3Value))
+            !Number.isInteger(Number(q3)) ||
+            Number(q3) < 1 ||
+            Number(q3) > 10
         ) {
             setQuestionFeedback(
-                question3Feedback,
+                questionFeedback[2],
                 "incorrect",
                 "יש להזין מספר שלם בין 1 ל־10."
             );
 
-        } else if (Number(q3Value) === 3) {
+        } else if (Number(q3) === 3) {
             correctCount++;
 
             setQuestionFeedback(
-                question3Feedback,
+                questionFeedback[2],
                 "correct",
-                "✓ נכון! שלוש הפעולות הן עצירת הפעילות " +
-                "באזור המסוכן, הרחקת החניכים ודיווח לרכז."
+                "נכון! שלוש הפעולות הן עצירת הפעילות, הרחקת החניכים ודיווח לרכז."
             );
 
         } else {
             setQuestionFeedback(
-                question3Feedback,
+                questionFeedback[2],
                 "incorrect",
-                "לא בדיוק. חזרו לשלוש הפעולות המופיעות " +
-                "בשאלה: עצירה, הרחקה ודיווח."
+                "לא בדיוק. חזרו לשלוש הפעולות: עצירה, הרחקה ודיווח."
             );
         }
 
-        // -------------------------------------
-        // Assessment summary
-        // -------------------------------------
+        // Summary
 
         assessmentSummary.hidden = false;
         assessmentSummary.classList.remove("all-correct");
 
         if (missingCount > 0) {
             assessmentSummary.textContent =
-                "עניתם נכון על " +
-                correctCount +
-                " מתוך 3 שאלות. יש עוד " +
-                missingCount +
-                " שאלות שלא הושלמו. " +
-                "השלימו אותן ונסו שוב.";
+                `עניתם נכון על ${correctCount} מתוך 3 שאלות. ` +
+                `נותרו ${missingCount} שאלות שלא הושלמו.`;
 
         } else if (correctCount === 3) {
-            assessmentCompleted = true;
+            state.assessmentCompleted = true;
 
             assessmentSummary.classList.add("all-correct");
 
             assessmentSummary.textContent =
-                "🎉 כל הכבוד! עניתם נכון על כל שלוש השאלות. " +
-                "הראיתם שאתם יודעים ליישם את כללי הבטיחות " +
-                "גם במצבים חדשים במהלך הפעילות.";
+                "כל הכבוד! עניתם נכון על כל שלוש השאלות והשלמתם את משימת הבטיחות.";
 
-            checkAssessmentBtn.hidden = true;
-            finishAssessmentBtn.hidden = false;
+            checkAssessment.hidden = true;
+            finishAssessment.hidden = false;
 
         } else {
             assessmentSummary.textContent =
-                "עניתם נכון על " +
-                correctCount +
-                " מתוך 3 שאלות. " +
+                `עניתם נכון על ${correctCount} מתוך 3 שאלות. ` +
                 "קראו את המשוב, תקנו את התשובות ונסו שוב.";
         }
 
         assessmentSummary.setAttribute("tabindex", "-1");
-        assessmentSummary.focus();
+        focusWithoutScroll(assessmentSummary);
 
         assessmentSummary.scrollIntoView({
             behavior: "auto",
@@ -1002,64 +861,49 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // =========================================
-    // 13. CLEAR OUTDATED ASSESSMENT FEEDBACK
-    // =========================================
-
-    assessmentForm.addEventListener("change", function () {
-        if (!assessmentCompleted) {
+    assessmentForm?.addEventListener("change", () => {
+        if (!state.assessmentCompleted) {
             clearAssessmentFeedback();
         }
     });
 
-    question3Input.addEventListener("input", function () {
-        if (!assessmentCompleted) {
+    question3Input?.addEventListener("input", () => {
+        if (!state.assessmentCompleted) {
             clearAssessmentFeedback();
         }
     });
 
-    // =========================================
-    // 14. ASSESSMENT NAVIGATION
-    // =========================================
-
-    backToGameBtn.addEventListener("click", function () {
+    $("backToGameBtn")?.addEventListener("click", () => {
         showScreen("transition");
     });
 
-    finishAssessmentBtn.addEventListener("click", function () {
-        if (!assessmentCompleted) {
-            return;
-        }
+    finishAssessment?.addEventListener("click", () => {
+        if (!state.assessmentCompleted) return;
 
-        completionScore.textContent = score;
+        setText(completionScore, state.score);
         showScreen("completion");
     });
 
-    // =========================================
-    // 15. RESET ASSESSMENT
-    // =========================================
+    // ==========================================
+    // RESET
+    // ==========================================
 
     function resetAssessment() {
-        assessmentForm.reset();
+        assessmentForm?.reset();
         clearAssessmentFeedback();
-        assessmentVisited = false;
+        state.assessmentVisited = false;
     }
 
-    // =========================================
-    // 16. RESET GAME
-    // =========================================
-
     function resetGame() {
-        foundHazards = [];
-        score = 0;
+        state.found.clear();
+        state.score = 0;
+        state.currentObject = null;
+        state.currentButton = null;
+        state.previousFocus = null;
+        state.wrongAttempt = false;
 
-        currentObjectId = "";
-        currentButton = null;
-        lastFocusedButton = null;
-        wrongAttempt = false;
-
-        objectButtons.forEach(function (button) {
-            button.classList.remove("found");
+        roomButtons.forEach((button) => {
+            button.classList.remove("found", "is-handled");
 
             button.style.opacity = "";
             button.style.transform = "";
@@ -1071,38 +915,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
             button.setAttribute(
                 "aria-label",
-                button.getAttribute("data-original-label")
+                button.dataset.originalLabel || ""
             );
         });
 
-        feedbackOverlay.hidden = true;
+        overlay.hidden = true;
         document.body.classList.remove("dialog-open");
 
-        transitionScore.textContent = "0";
+        setText(transitionScore, "0");
+        setText(completionScore, "0");
 
         resetAssessment();
         updateProgress();
     }
 
-    // =========================================
-    // 17. RESTART GAME
-    // =========================================
-
-    restartBtn.addEventListener("click", function () {
+    $("restartBtn")?.addEventListener("click", () => {
         resetGame();
-
-        gameStarted = true;
-
-        // Keep previously unlocked learning stages available.
+        state.gameStarted = true;
         showScreen("game");
     });
 
-    // =========================================
-    // 18. INITIALIZATION
-    // =========================================
+    // ==========================================
+    // INITIALIZATION
+    // ==========================================
 
     resetGame();
     updateNavigation();
     showScreen("welcome");
-
 });

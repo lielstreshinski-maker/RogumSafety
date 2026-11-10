@@ -357,6 +357,9 @@ h1 span {
     background-color: var(--white);
     border: 2px solid #B42332;
     border-radius: 20px;
+
+    direction: rtl;
+    text-align: right !important;
 }
 
 .safety-warning h3 {

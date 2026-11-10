@@ -1,46 +1,597 @@
 
+/* ==================================
+   ROGUM SAFETY - DESIGN SYSTEM
+   ================================== */
+
+:root {
+    --purple: #7766C6;
+    --purple-dark: #5E4DAE;
+    --purple-light: #E9E3FA;
+    --peach: #FFAA66;
+    --mint: #B8DFCC;
+    --cream: #F8F5EF;
+    --dark: #292B40;
+    --white: #FFFFFF;
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f5f7fa;
-    color: #243047;
+    min-height: 100vh;
+    font-family: 'Heebo', sans-serif;
+    background-color: var(--cream);
+    color: var(--dark);
+    display: flex;
+    flex-direction: column;
 }
 
-.container {
-    max-width: 800px;
-    margin: 80px auto;
-    padding: 32px;
-    text-align: center;
+[hidden] {
+    display: none !important;
+}
+
+main {
+    flex: 1;
+}
+
+/* ==================================
+   HEADER
+   ================================== */
+
+.site-header {
+    padding: 24px 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.brand strong {
+    color: var(--purple);
+}
+
+.brand-icon {
+    background-color: var(--purple);
+    color: var(--white);
+    padding: 9px 14px;
+    border-radius: 12px;
+    font-size: 22px;
+}
+
+.duration-label {
+    background-color: var(--white);
+    padding: 11px 20px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* ==================================
+   COMMON SCREEN LAYOUT
+   ================================== */
+
+.welcome-section,
+.intro-section,
+.preparation-section {
+    padding-top: 35px;
+    padding-bottom: 50px;
+}
+
+.welcome-card,
+.intro-card,
+.preparation-card {
+    position: relative;
+    max-width: 1100px;
+    width: 100%;
+    background-color: var(--purple-light);
+    border-radius: 36px;
+    padding: 60px 50px;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* Decorative shapes */
+
+.welcome-card::before,
+.intro-card::before,
+.preparation-card::before {
+    content: "";
+    position: absolute;
+    top: -65px;
+    left: -65px;
+    width: 190px;
+    height: 190px;
+    background-color: var(--peach);
+    border-radius: 50%;
+    opacity: 0.4;
+    z-index: -1;
+}
+
+.welcome-card::after,
+.intro-card::after,
+.preparation-card::after {
+    content: "";
+    position: absolute;
+    bottom: -75px;
+    right: -65px;
+    width: 210px;
+    height: 210px;
+    background-color: var(--mint);
+    border-radius: 50%;
+    opacity: 0.6;
+    z-index: -1;
+}
+
+/* ==================================
+   LABELS AND HEADINGS
+   ================================== */
+
+.welcome-tag,
+.intro-tag {
+    display: inline-block;
+    background-color: var(--white);
+    color: var(--purple-dark);
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 24px;
 }
 
 h1 {
-    font-size: 32px;
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 24px;
 }
 
-p {
-    font-size: 18px;
-    line-height: 1.6;
+h1 span {
+    color: var(--purple);
 }
 
-button {
-    padding: 14px 28px;
+.intro-card h2,
+.preparation-card h2 {
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 20px;
+}
+
+.welcome-description,
+.intro-description {
+    max-width: 700px;
+    margin: 0 auto 30px;
+    font-size: 19px;
+    line-height: 1.9;
+}
+
+.welcome-description {
+    margin-bottom: 35px;
+}
+
+/* ==================================
+   WELCOME ILLUSTRATION
+   ================================== */
+
+.hero-illustration {
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto 35px;
+}
+
+.hero-illustration img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 24px;
+}
+
+/* ==================================
+   MAIN BUTTONS
+   ================================== */
+
+.start-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    background-color: var(--purple);
+    color: var(--white);
+
     border: none;
-    border-radius: 8px;
-    background-color: #2457a7;
-    color: white;
-    font-size: 18px;
+    padding: 18px 55px;
+    border-radius: 16px;
+
+    font-family: inherit;
+    font-size: 21px;
+    font-weight: 700;
+    cursor: pointer;
+
+    box-shadow: 0 6px 0 var(--purple-dark);
+
+    transition:
+            background-color 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+.start-button:hover {
+    background-color: var(--purple-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 #453783;
+}
+
+.start-button:active {
+    transform: translateY(3px);
+    box-shadow: 0 3px 0 #453783;
+}
+
+.start-button:focus-visible,
+.back-button:focus-visible {
+    outline: 3px solid var(--dark);
+    outline-offset: 4px;
+}
+
+/* ==================================
+   WELCOME SCREEN
+   ================================== */
+
+.welcome-note {
+    margin-top: 30px;
+    margin-bottom: 0;
+    font-size: 15px;
+    color: #5545A3;
+}
+
+/* ==================================
+   INTRODUCTION SCREEN
+   ================================== */
+
+.learning-item {
+    background-color: var(--white);
+    border-radius: 22px;
+    padding: 30px 20px;
+    height: 100%;
+    border: 2px solid transparent;
+
+    transition:
+            transform 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.learning-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--purple);
+}
+
+.learning-icon {
+    display: block;
+    font-size: 38px;
+    margin-bottom: 18px;
+}
+
+.learning-item h3 {
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.learning-item p {
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+/* ==================================
+   PREPARATION SCREEN
+   ================================== */
+
+.preparation-item {
+    background-color: var(--white);
+    border-radius: 22px;
+    padding: 30px 20px;
+    height: 100%;
+    border: 2px solid transparent;
+
+    transition:
+            transform 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.preparation-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--purple);
+}
+
+.preparation-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 20px;
+
+    border-radius: 22px;
+    font-size: 36px;
+}
+
+.peach-icon {
+    background-color: var(--peach);
+}
+
+.mint-icon {
+    background-color: var(--mint);
+}
+
+.purple-icon {
+    background-color: #D5C9F7;
+}
+
+.preparation-item h3 {
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.preparation-item p {
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+/* Safety warning */
+
+.safety-warning {
+    max-width: 850px;
+    margin: 35px auto 10px;
+    padding: 25px 30px;
+
+    background-color: var(--white);
+    border: 2px solid #B42332;
+    border-radius: 20px;
+}
+
+.safety-warning h3 {
+    color: #B42332;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.safety-warning p {
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 0;
+}
+
+/* ==================================
+   BACK NAVIGATION
+   ================================== */
+
+.intro-navigation {
+    margin-top: 28px;
+}
+
+.back-button {
+    background: transparent;
+    border: none;
+    color: var(--purple-dark);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 10px;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #183d78;
+.back-button:hover {
+    background-color: rgba(119, 102, 198, 0.12);
 }
 
-button:focus-visible {
-    outline: 3px solid #f0a500;
-    outline-offset: 3px;
+/* ==================================
+   MESSAGES
+   ================================== */
+
+.intro-message {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--purple-dark);
+}
+
+.intro-message:empty {
+    display: none;
+}
+
+/* ==================================
+   FOOTER
+   ================================== */
+
+.site-footer {
+    padding: 24px 15px;
+    font-size: 14px;
+    color: #55536B;
+}
+
+.site-footer p {
+    margin: 0;
+}
+
+/* ==================================
+   TABLET
+   ================================== */
+
+@media (max-width: 992px) {
+
+    .welcome-card,
+    .intro-card,
+    .preparation-card {
+        padding: 50px 35px;
+        border-radius: 28px;
+    }
+
+    h1 {
+        font-size: 46px;
+    }
+
+    .intro-card h2,
+    .preparation-card h2 {
+        font-size: 38px;
+    }
+
+    .welcome-description,
+    .intro-description {
+        font-size: 18px;
+    }
+
+    .hero-illustration {
+        max-width: 600px;
+    }
+}
+
+/* ==================================
+   MOBILE
+   ================================== */
+
+@media (max-width: 768px) {
+
+    .site-header {
+        padding: 18px 0;
+    }
+
+    .brand {
+        font-size: 16px;
+        gap: 8px;
+    }
+
+    .brand-icon {
+        font-size: 17px;
+        padding: 7px 10px;
+    }
+
+    .duration-label {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .welcome-section,
+    .intro-section,
+    .preparation-section {
+        padding-top: 15px;
+        padding-bottom: 25px;
+    }
+
+    .welcome-card,
+    .intro-card,
+    .preparation-card {
+        padding: 40px 20px;
+        border-radius: 24px;
+    }
+
+    .welcome-tag,
+    .intro-tag {
+        font-size: 12px;
+        padding: 8px 14px;
+    }
+
+    h1 {
+        font-size: 34px;
+        line-height: 1.4;
+    }
+
+    .intro-card h2,
+    .preparation-card h2 {
+        font-size: 32px;
+    }
+
+    .welcome-description,
+    .intro-description {
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+    .hero-illustration {
+        margin-bottom: 28px;
+    }
+
+    .start-button {
+        width: 100%;
+        max-width: 300px;
+        font-size: 18px;
+        padding: 16px 30px;
+    }
+
+    .welcome-note {
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .learning-item,
+    .preparation-item {
+        padding: 22px 18px;
+    }
+
+    .learning-item h3,
+    .preparation-item h3 {
+        font-size: 19px;
+    }
+
+    .learning-item p,
+    .preparation-item p {
+        font-size: 15px;
+    }
+
+    .safety-warning {
+        padding: 20px;
+    }
+
+    .safety-warning h3 {
+        font-size: 19px;
+    }
+
+    .safety-warning p {
+        font-size: 15px;
+    }
+
+    .welcome-card::before,
+    .intro-card::before,
+    .preparation-card::before {
+        width: 120px;
+        height: 120px;
+    }
+
+    .welcome-card::after,
+    .intro-card::after,
+    .preparation-card::after {
+        width: 130px;
+        height: 130px;
+    }
+}
+
+/* ==================================
+   ACCESSIBILITY
+   ================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .start-button,
+    .learning-item,
+    .preparation-item {
+        transition: none;
+    }
+
+    .start-button:hover,
+    .start-button:active,
+    .learning-item:hover,
+    .preparation-item:hover {
+        transform: none;
+    }
 }

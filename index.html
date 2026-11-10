@@ -1,77 +1,187 @@
 
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+            name="description"
+            content="RogumSafety - הדרכת בטיחות אינטראקטיבית למדריכים ומתנדבים במרכז הנוער רוג'ום.">
 
     <title>Rogum Safety | מתחילים להדריך בבטחה</title>
 
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <!-- External stylesheets -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet">
+    <link
+            href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet">
 
-    <!-- Our CSS -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- Our JavaScript -->
+    <!-- Main application script -->
     <script src="js/script.js" defer></script>
 </head>
 
 <body>
 
-<header class="site-header">
-    <div class="container d-flex justify-content-between align-items-center">
+<!-- =========================================
+     HEADER AND GUIDED NAVIGATION
+     ========================================= -->
 
-        <div class="brand">
-            <span class="brand-icon" aria-hidden="true">✦</span>
-            <span>ROGUM <strong>SAFETY</strong></span>
+<header class="site-header">
+    <div class="container">
+
+        <div class="header-top">
+
+            <div class="brand" aria-label="Rogum Safety">
+                <span class="brand-icon" aria-hidden="true">✦</span>
+                <span>ROGUM <strong>SAFETY</strong></span>
+            </div>
+
+            <div class="header-actions">
+                <span class="duration-label">כ־10 דקות</span>
+
+                <button
+                        id="navToggleBtn"
+                        class="nav-toggle"
+                        type="button"
+                        aria-label="פתיחת תפריט הניווט"
+                        aria-controls="mainNavigation"
+                        aria-expanded="false">
+
+                        <span class="nav-toggle-icon" aria-hidden="true">
+                            ☰
+                        </span>
+                </button>
+            </div>
+
         </div>
 
-        <span class="duration-label">כ־10 דקות</span>
+        <!-- Primary navigation -->
+        <nav
+                id="mainNavigation"
+                class="main-navigation"
+                aria-label="ניווט ראשי בין שלבי ההדרכה">
+
+            <ul class="navigation-list">
+
+                <li>
+                    <button
+                            type="button"
+                            class="nav-step active"
+                            data-nav-step="welcome"
+                            aria-current="step">
+
+                        <span class="nav-step-label">בית</span>
+                    </button>
+                </li>
+
+                <li>
+                    <button
+                            type="button"
+                            class="nav-step locked"
+                            data-nav-step="intro"
+                            disabled
+                            aria-label="מה נלמד? - השלב עדיין נעול">
+
+                        <span class="nav-step-label">מה נלמד?</span>
+                        <span class="nav-lock" aria-hidden="true">🔒</span>
+                    </button>
+                </li>
+
+                <li>
+                    <button
+                            type="button"
+                            class="nav-step locked"
+                            data-nav-step="preparation"
+                            disabled
+                            aria-label="כללי בטיחות - השלב עדיין נעול">
+
+                        <span class="nav-step-label">כללי בטיחות</span>
+                        <span class="nav-lock" aria-hidden="true">🔒</span>
+                    </button>
+                </li>
+
+                <li>
+                    <button
+                            type="button"
+                            class="nav-step locked"
+                            data-nav-step="game"
+                            disabled
+                            aria-label="תרגול - השלב עדיין נעול">
+
+                        <span class="nav-step-label">תרגול</span>
+                        <span class="nav-lock" aria-hidden="true">🔒</span>
+                    </button>
+                </li>
+
+                <li>
+                    <button
+                            type="button"
+                            class="nav-step locked"
+                            data-nav-step="assessment"
+                            disabled
+                            aria-label="סיכום - השלב עדיין נעול">
+
+                        <span class="nav-step-label">סיכום</span>
+                        <span class="nav-lock" aria-hidden="true">🔒</span>
+                    </button>
+                </li>
+
+            </ul>
+        </nav>
 
     </div>
 </header>
 
+
+<!-- =========================================
+     MAIN CONTENT
+     ========================================= -->
+
 <main id="main-content">
 
-    <!-- SCREEN 1: WELCOME -->
-    <section id="welcomeScreen"
-             class="welcome-section container text-center"
-             aria-labelledby="welcome-title">
+    <!-- =====================================
+         SCREEN 1: WELCOME
+         ===================================== -->
+
+    <section
+            id="welcomeScreen"
+            class="welcome-section container text-center"
+            aria-labelledby="welcome-title">
 
         <div class="welcome-card mx-auto">
 
-            <span class="welcome-tag">
-                ברוכים הבאים למרכז הנוער רוג'ום!
-            </span>
+                <span class="welcome-tag">
+                    ברוכים הבאים למרכז הנוער רוג'ום!
+                </span>
 
             <h1 id="welcome-title">
-                מוכנים להדריך
-                <span>בבטחה?</span>
+                מוכנים להדריך <span>בבטחה?</span>
             </h1>
 
             <p class="welcome-description">
-                לפני שמתחילים להדריך, לומדים לשמור על
-                סביבה בטוחה.
-                בואו להכיר את חדר הפעילות, לזהות
-                מפגעים ולגלות כיצד לפעול נכון.
+                לפני שמתחילים להדריך, לומדים לשמור על סביבה בטוחה.
+                בואו להכיר את חדר הפעילות, לזהות מפגעים
+                ולגלות כיצד לפעול נכון.
             </p>
 
             <div class="hero-illustration">
-                <img src="assets/images/classroom.png"
-                     alt="איור של חדר פעילות במרכז הנוער"
-                     class="img-fluid">
+                <img
+                        src="assets/images/classroom.png"
+                        alt="איור של חדר פעילות במרכז הנוער"
+                        class="img-fluid">
             </div>
 
-            <button type="button"
+            <button
                     id="startBtn"
-                    class="start-button">
+                    class="start-button"
+                    type="button">
+
                 בואו נתחיל
                 <span aria-hidden="true">←</span>
             </button>
@@ -83,81 +193,101 @@
         </div>
     </section>
 
-    <!-- SCREEN 2: INTRODUCTION -->
-    <section id="introScreen"
-             class="intro-section container text-center"
-             aria-labelledby="intro-title"
-             hidden>
+
+    <!-- =====================================
+         SCREEN 2: LEARNING OBJECTIVES
+         ===================================== -->
+
+    <section
+            id="introScreen"
+            class="intro-section container text-center"
+            aria-labelledby="intro-title"
+            hidden>
 
         <div class="intro-card mx-auto">
 
-            <span class="intro-tag">
-                לפני שמתחילים
-            </span>
+                <span class="intro-tag">
+                    לפני שמתחילים
+                </span>
 
             <h2 id="intro-title" tabindex="-1">
                 מה נלמד היום?
             </h2>
 
             <p class="intro-description">
-                לפני שמתחילים להדריך,
-                נכיר את הסביבה ונלמד כיצד
-                לשמור על בטיחות המשתתפים.
-                בסיום ההדרכה תוכלו לזהות
-                מפגעים ולבחור כיצד לפעול נכון.
+                לפני שמתחילים להדריך, נכיר את הסביבה
+                ונלמד כיצד לשמור על בטיחות המשתתפים.
+                בסיום ההדרכה תוכלו לזהות מפגעים
+                ולבחור כיצד לפעול נכון.
             </p>
 
             <div class="row g-3 mt-3">
 
                 <div class="col-12 col-md-4">
                     <div class="learning-item">
-                        <span class="learning-icon"
-                              aria-hidden="true">🔎</span>
+
+                            <span class="learning-icon" aria-hidden="true">
+                                🔎
+                            </span>
+
                         <h3>מזהים מפגעים</h3>
+
                         <p>
-                            נלמד לזהות סיכונים
-                            ומפגעים בחדר הפעילות.
+                            נלמד לזהות סיכונים ומפגעים בחדר הפעילות.
                         </p>
+
                     </div>
                 </div>
 
                 <div class="col-12 col-md-4">
                     <div class="learning-item">
-                        <span class="learning-icon"
-                              aria-hidden="true">🛡️</span>
+
+                            <span class="learning-icon" aria-hidden="true">
+                                🛡️
+                            </span>
+
                         <h3>פועלים נכון</h3>
+
                         <p>
-                            נכיר דרכי פעולה בטוחות
-                            להתמודדות עם מפגעים.
+                            נכיר דרכי פעולה בטוחות להתמודדות עם מפגעים.
                         </p>
+
                     </div>
                 </div>
 
                 <div class="col-12 col-md-4">
                     <div class="learning-item">
-                        <span class="learning-icon"
-                              aria-hidden="true">🎮</span>
+
+                            <span class="learning-icon" aria-hidden="true">
+                                🎮
+                            </span>
+
                         <h3>מתרגלים</h3>
+
                         <p>
-                            נתנסה במשימה אינטראקטיבית
-                            ונקבל משוב מיידי.
+                            נתנסה במשימה אינטראקטיבית ונקבל משוב מיידי.
                         </p>
+
                     </div>
                 </div>
 
             </div>
 
-            <button type="button"
+            <button
                     id="continueBtn"
-                    class="start-button mt-4">
+                    class="start-button mt-4"
+                    type="button">
+
                 ממשיכים ללמוד
                 <span aria-hidden="true">←</span>
             </button>
 
             <div class="intro-navigation">
-                <button type="button"
+                <button
                         id="backBtn"
-                        class="back-button">
+                        class="back-button"
+                        type="button">
+
                     → חזרה למסך הפתיחה
                 </button>
             </div>
@@ -165,96 +295,120 @@
         </div>
     </section>
 
-    <!-- SCREEN 3: ROOM PREPARATION -->
-    <section id="preparationScreen"
-             class="preparation-section container text-center"
-             aria-labelledby="preparation-title"
-             hidden>
+
+    <!-- =====================================
+         SCREEN 3: ROOM PREPARATION
+         ===================================== -->
+
+    <section
+            id="preparationScreen"
+            class="preparation-section container text-center"
+            aria-labelledby="preparation-title"
+            hidden>
 
         <div class="preparation-card mx-auto">
 
-            <span class="intro-tag">
-                לפני שהחניכים נכנסים
-            </span>
+                <span class="intro-tag">
+                    לפני שהחניכים נכנסים
+                </span>
 
             <h2 id="preparation-title" tabindex="-1">
                 חדר בטוח מתחיל בבדיקה טובה!
             </h2>
 
             <p class="intro-description">
-                לפני כל פעילות, עוברים על שלושה
-                דברים חשובים כדי לוודא
-                שחדר הפעילות מוכן ובטוח.
+                לפני כל פעילות, עוברים על שלושה דברים חשובים
+                כדי לוודא שחדר הפעילות מוכן ובטוח.
             </p>
 
             <div class="row g-3 mt-3">
 
                 <div class="col-12 col-md-4">
                     <article class="preparation-item">
-                        <div class="preparation-icon peach-icon"
-                             aria-hidden="true">🚶</div>
+
+                        <div
+                                class="preparation-icon peach-icon"
+                                aria-hidden="true">
+                            🚶
+                        </div>
+
                         <h3>מעברים פנויים</h3>
+
                         <p>
-                            מוודאים שאין תיקים,
-                            כבלים או חפצים שחוסמים
-                            את המעברים.
+                            מוודאים שאין תיקים, כבלים או חפצים
+                            שחוסמים את המעברים.
                         </p>
+
                     </article>
                 </div>
 
                 <div class="col-12 col-md-4">
                     <article class="preparation-item">
-                        <div class="preparation-icon mint-icon"
-                             aria-hidden="true">🪑</div>
+
+                        <div
+                                class="preparation-icon mint-icon"
+                                aria-hidden="true">
+                            🪑
+                        </div>
+
                         <h3>ציוד תקין</h3>
+
                         <p>
-                            בודקים שהכיסאות,
-                            השולחנות והציוד
+                            בודקים שהכיסאות, השולחנות והציוד
                             תקינים ובטוחים לשימוש.
                         </p>
+
                     </article>
                 </div>
 
                 <div class="col-12 col-md-4">
                     <article class="preparation-item">
-                        <div class="preparation-icon purple-icon"
-                             aria-hidden="true">🛡️</div>
+
+                        <div
+                                class="preparation-icon purple-icon"
+                                aria-hidden="true">
+                            🛡️
+                        </div>
+
                         <h3>סביבה בטוחה</h3>
+
                         <p>
-                            סורקים את החדר,
-                            מזהים מפגעים ומוודאים
-                            שהסביבה מוכנה לפעילות.
+                            סורקים את החדר, מזהים מפגעים
+                            ומוודאים שהסביבה מוכנה לפעילות.
                         </p>
+
                     </article>
                 </div>
 
             </div>
 
-            <div class="safety-warning text-start"
-                 role="note">
+            <div class="safety-warning" role="note">
+
                 <h3>⚠️ מצאתם מפגע?</h3>
+
                 <p>
                     לא ממשיכים בפעילות ולא מאלתרים תיקון.
-                    מרחיקים את החניכים מהמפגע ומדווחים
-                    לרכז לפני שממשיכים.
+                    מרחיקים את החניכים מהמפגע ומדווחים לרכז
+                    לפני שממשיכים.
                 </p>
+
             </div>
 
-            <button type="button"
+            <button
                     id="practiceBtn"
-                    class="start-button mt-4">
+                    class="start-button mt-4"
+                    type="button">
+
                 ממשיכים לתרגול
                 <span aria-hidden="true">←</span>
             </button>
 
-            <p id="preparationMessage"
-               class="intro-message"
-               aria-live="polite"></p>
-
             <div class="intro-navigation">
-                <button type="button"
+                <button
                         id="backToIntroBtn"
-                        class="back-button">
+                        class="back-button"
+                        type="button">
+
                     → חזרה למטרות הלמידה
                 </button>
             </div>
@@ -262,10 +416,767 @@
         </div>
     </section>
 
+
+    <!-- =====================================
+         SCREEN 4: INTERACTIVE SAFETY GAME
+         ===================================== -->
+
+    <section
+            id="gameScreen"
+            class="game-section container text-center"
+            aria-labelledby="game-title"
+            hidden>
+
+        <div class="game-card mx-auto">
+
+                <span class="intro-tag">
+                    משימת הבטיחות שלכם
+                </span>
+
+            <h2 id="game-title" tabindex="-1">
+                מה לא בטוח בחדר?
+            </h2>
+
+            <p class="game-description">
+                לפני שהחניכים נכנסים, בדקו את החדר.
+                לחצו על החפצים וגלו אילו מהם מסוכנים.
+            </p>
+
+            <!-- Game progress and score -->
+            <div class="game-dashboard">
+
+                <div class="game-stat">
+                    <span aria-hidden="true">🎯</span>
+                    <span>מפגעים שטופלו:</span>
+                    <strong id="hazardCounter">0 מתוך 4</strong>
+                </div>
+
+                <div class="game-progress">
+                    <div class="progress">
+                        <div
+                                id="hazardProgress"
+                                class="progress-bar"
+                                role="progressbar"
+                                aria-label="התקדמות במשחק"
+                                aria-valuemin="0"
+                                aria-valuemax="4"
+                                aria-valuenow="0"
+                                style="width: 0%">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-stat">
+                    <span aria-hidden="true">⭐</span>
+                    <span>נקודות:</span>
+                    <strong id="scoreCounter">0</strong>
+                </div>
+
+            </div>
+
+            <!-- Interactive illustrated room -->
+            <div
+                    class="game-room"
+                    role="group"
+                    aria-label="חדר פעילות מאויר עם חפצים שאפשר לבדוק">
+
+                <img
+                        class="room-background"
+                        src="assets/images/game-room.png"
+                        alt=""
+                        aria-hidden="true"
+                        draggable="false">
+
+                <!-- Hazard 1: Electrical cable -->
+                <button
+                        type="button"
+                        class="room-object object-cable"
+                        data-object="cable"
+                        aria-label="בדיקת כבל החשמל">
+
+                    <img
+                            src="assets/images/stickers/cable.png"
+                            alt=""
+                            draggable="false">
+                </button>
+
+                <!-- Hazard 2: Water on the floor -->
+                <button
+                        type="button"
+                        class="room-object object-water"
+                        data-object="water"
+                        aria-label="בדיקת המים על הרצפה">
+
+                    <img
+                            src="assets/images/stickers/water.png"
+                            alt=""
+                            draggable="false">
+                </button>
+
+                <!-- Hazard 3: Bag blocking the walkway -->
+                <button
+                        type="button"
+                        class="room-object object-bag"
+                        data-object="bag"
+                        aria-label="בדיקת התיק במעבר">
+
+                    <img
+                            src="assets/images/stickers/backpack.png"
+                            alt=""
+                            draggable="false">
+                </button>
+
+                <!-- Hazard 4: Scissors -->
+                <button
+                        type="button"
+                        class="room-object object-scissors"
+                        data-object="scissors"
+                        aria-label="בדיקת המספריים">
+
+                    <img
+                            src="assets/images/stickers/scissors.png"
+                            alt=""
+                            draggable="false">
+                </button>
+
+                <!-- Safe object 1: Ball -->
+                <button
+                        type="button"
+                        class="room-object object-ball"
+                        data-object="ball"
+                        aria-label="בדיקת הכדור">
+
+                    <img
+                            src="assets/images/stickers/ball.png"
+                            alt=""
+                            draggable="false">
+                </button>
+
+                <!-- Safe object 2: Plant -->
+                <button
+                        type="button"
+                        class="room-object object-plant"
+                        data-object="plant"
+                        aria-label="בדיקת העציץ">
+
+                    <img
+                            src="assets/images/stickers/plant.png"
+                            alt=""
+                            draggable="false">
+                </button>
+
+                <!-- Safe object 3: Books -->
+                <button
+                        type="button"
+                        class="room-object object-books"
+                        data-object="books"
+                        aria-label="בדיקת הספרים">
+
+                    <img
+                            src="assets/images/stickers/books.png"
+                            alt=""
+                            draggable="false">
+                </button>
+
+                <!-- Safe object 4: Pencils -->
+                <button
+                        type="button"
+                        class="room-object object-pencils"
+                        data-object="pencils"
+                        aria-label="בדיקת כלי הכתיבה">
+
+                    <img
+                            src="assets/images/stickers/pencils.png"
+                            alt=""
+                            draggable="false">
+                </button>
+
+            </div>
+
+            <p class="room-hint">
+                💡 טיפ: לא כל חפץ בחדר הוא מפגע. בדקו היטב!
+            </p>
+
+            <div class="intro-navigation">
+                <button
+                        id="backToPreparationBtn"
+                        class="back-button"
+                        type="button">
+
+                    → חזרה להכנת החדר
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- =====================================
+         SCREEN 5: GAME COMPLETION TRANSITION
+         ===================================== -->
+
+    <section
+            id="gameTransitionScreen"
+            class="transition-section container text-center"
+            aria-labelledby="transition-title"
+            hidden>
+
+        <div class="transition-card mx-auto">
+
+                <span class="transition-sparkle" aria-hidden="true">
+                    ✨ 🎯 ✨
+                </span>
+
+            <span class="intro-tag">
+                    השלמתם את משימת החדר!
+                </span>
+
+            <h2 id="transition-title" tabindex="-1">
+                כל הכבוד! זיהיתם את כל ארבעת המפגעים!
+            </h2>
+
+            <p class="transition-description">
+                בדקתם את החדר, זיהיתם את המפגעים
+                ובחרתם כיצד לטפל בהם.
+                עכשיו נבדוק איך תפעלו במצבים חדשים,
+                לפני הפעילות ובמהלכה.
+            </p>
+
+            <div
+                    class="transition-stats"
+                    aria-label="סיכום המשחק">
+
+                <span>🎯 4 מתוך 4 מפגעים</span>
+
+                <span>
+                        ⭐ <strong id="transitionScore">0</strong> נקודות
+                    </span>
+
+            </div>
+
+            <p class="transition-prompt">
+                מוכנים לאתגר האחרון?
+            </p>
+
+            <button
+                    id="continueToAssessmentBtn"
+                    class="start-button"
+                    type="button">
+
+                ממשיכים לשאלות המסכמות
+                <span aria-hidden="true">←</span>
+            </button>
+
+        </div>
+    </section>
+
+
+    <!-- =====================================
+         SCREEN 6: FINAL ASSESSMENT
+         ===================================== -->
+
+    <section
+            id="assessmentScreen"
+            class="assessment-section container text-center"
+            aria-labelledby="assessment-title"
+            hidden>
+
+        <div class="assessment-card mx-auto">
+
+                <span class="intro-tag">
+                    השלב האחרון לפני סיום ההדרכה
+                </span>
+
+            <h2 id="assessment-title" tabindex="-1">
+                עכשיו אתם המדריכים!
+            </h2>
+
+            <p class="assessment-description">
+                כבר למדתם לזהות מפגעים בחדר.
+                עכשיו נראה איך תפעלו במצבים חדשים
+                שיכולים להתרחש במהלך פעילות במרכז הנוער.
+            </p>
+
+            <p class="assessment-instruction">
+                ענו על שלוש השאלות.
+                תוכלו לבדוק את התשובות ולנסות שוב.
+            </p>
+
+            <form id="assessmentForm" novalidate>
+
+                <!-- Question 1: Single-choice question -->
+                <fieldset class="assessment-question">
+
+                    <legend>
+                        <span class="question-number">01</span>
+                        בדיקת ציוד לפני תחילת הפעילות
+                    </legend>
+
+                    <span class="question-type">
+                            בחירה אחת
+                        </span>
+
+                    <p class="question-text">
+                        במהלך בדיקת החדר לפני תחילת הפעילות,
+                        אתם מגלים שכיסא אחד אינו יציב.
+                        מהי הפעולה המתאימה ביותר?
+                    </p>
+
+                    <label class="assessment-option">
+                        <input
+                                type="radio"
+                                name="question1"
+                                value="a">
+
+                        <span>
+                                להשאיר את הכיסא ולבקש מהחניכים
+                                להשתמש בו בזהירות.
+                            </span>
+                    </label>
+
+                    <label class="assessment-option">
+                        <input
+                                type="radio"
+                                name="question1"
+                                value="b">
+
+                        <span>
+                                להוציא את הכיסא משימוש,
+                                למנוע גישה אליו ולדווח לרכז
+                                כדי שיטופל לפני השימוש.
+                            </span>
+                    </label>
+
+                    <label class="assessment-option">
+                        <input
+                                type="radio"
+                                name="question1"
+                                value="c">
+
+                        <span>
+                                לנסות לייצב את הכיסא בעצמנו
+                                כדי שלא לעכב את הפעילות.
+                            </span>
+                    </label>
+
+                    <div
+                            id="question1Feedback"
+                            class="assessment-feedback"
+                            role="status"
+                            aria-live="polite"
+                            hidden>
+                    </div>
+
+                </fieldset>
+
+
+                <!-- Question 2: Multiple-choice question -->
+                <fieldset class="assessment-question">
+
+                    <legend>
+                        <span class="question-number">02</span>
+                        תגובה למצב שמתפתח במהלך הפעילות
+                    </legend>
+
+                    <span class="question-type">
+                            בחירה מרובה
+                        </span>
+
+                    <p class="question-text">
+                        במהלך משחק קבוצתי,
+                        מדף מתנדנד ונראה שהוא עלול ליפול.
+                        אילו פעולות נכון לבצע?
+                    </p>
+
+                    <p class="question-help">
+                        סמנו את כל התשובות הנכונות.
+                    </p>
+
+                    <label class="assessment-option">
+                        <input
+                                type="checkbox"
+                                name="question2"
+                                value="stop">
+
+                        <span>
+                                עוצרים את הפעילות באזור המסוכן.
+                            </span>
+                    </label>
+
+                    <label class="assessment-option">
+                        <input
+                                type="checkbox"
+                                name="question2"
+                                value="move">
+
+                        <span>
+                                מרחיקים את החניכים מהאזור.
+                            </span>
+                    </label>
+
+                    <label class="assessment-option">
+                        <input
+                                type="checkbox"
+                                name="question2"
+                                value="child">
+
+                        <span>
+                                מבקשים מחניך לתקן את הציוד.
+                            </span>
+                    </label>
+
+                    <label class="assessment-option">
+                        <input
+                                type="checkbox"
+                                name="question2"
+                                value="report">
+
+                        <span>
+                                מדווחים לרכז וממתינים לטיפול בטוח.
+                            </span>
+                    </label>
+
+                    <div
+                            id="question2Feedback"
+                            class="assessment-feedback"
+                            role="status"
+                            aria-live="polite"
+                            hidden>
+                    </div>
+
+                </fieldset>
+
+
+                <!-- Question 3: Numeric input -->
+                <fieldset class="assessment-question">
+
+                    <legend>
+                        <span class="question-number">03</span>
+                        זוכרים את נוהל הבטיחות
+                    </legend>
+
+                    <span class="question-type">
+                            תשובה מספרית
+                        </span>
+
+                    <p class="question-text">
+                        במקרה של מפגע מסוכן,
+                        כמה פעולות מרכזיות נדרשות לפי הנוהל שלמדתם:
+                        עצירת הפעילות באזור המסוכן,
+                        הרחקת חניכים ודיווח לרכז?
+                    </p>
+
+                    <label
+                            class="number-label"
+                            for="question3">
+
+                        מספר הפעולות:
+                    </label>
+
+                    <input
+                            id="question3"
+                            name="question3"
+                            class="assessment-number"
+                            type="number"
+                            min="1"
+                            max="10"
+                            step="1"
+                            inputmode="numeric"
+                            placeholder="הקלידו מספר"
+                            aria-describedby="question3Feedback">
+
+                    <div
+                            id="question3Feedback"
+                            class="assessment-feedback"
+                            role="status"
+                            aria-live="polite"
+                            hidden>
+                    </div>
+
+                </fieldset>
+
+
+                <!-- Assessment summary -->
+                <div
+                        id="assessmentSummary"
+                        class="assessment-summary"
+                        role="status"
+                        aria-live="polite"
+                        hidden>
+                </div>
+
+                <button
+                        id="checkAssessmentBtn"
+                        class="start-button assessment-check"
+                        type="submit">
+
+                    בודקים תשובות
+                    <span aria-hidden="true">✓</span>
+                </button>
+
+                <button
+                        id="finishAssessmentBtn"
+                        class="start-button assessment-finish"
+                        type="button"
+                        hidden>
+
+                    למסך הסיום החגיגי
+                    <span aria-hidden="true">←</span>
+                </button>
+
+            </form>
+
+            <div class="intro-navigation">
+                <button
+                        id="backToGameBtn"
+                        class="back-button"
+                        type="button">
+
+                    → חזרה לחדר המשחק
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- =====================================
+         SCREEN 7: COMPLETION
+         ===================================== -->
+
+    <section
+            id="completionScreen"
+            class="completion-section container text-center"
+            aria-labelledby="completion-title"
+            hidden>
+
+        <div class="completion-card">
+
+            <!-- Decorative elements -->
+            <span
+                    class="completion-decoration decoration-one"
+                    aria-hidden="true">
+                    ✨
+                </span>
+
+            <span
+                    class="completion-decoration decoration-two"
+                    aria-hidden="true">
+                    ⭐
+                </span>
+
+            <span
+                    class="completion-decoration decoration-three"
+                    aria-hidden="true">
+                    ✨
+                </span>
+
+            <div
+                    class="completion-trophy"
+                    aria-hidden="true">
+                🏆
+            </div>
+
+            <span class="completion-tag">
+                    המשימה הושלמה בהצלחה!
+                </span>
+
+            <h2 id="completion-title" tabindex="-1">
+                כל הכבוד! החדר בטוח יותר!
+            </h2>
+
+            <p class="completion-description">
+                זיהיתם את כל ארבעת המפגעים
+                ובחרתם כיצד לפעול בצורה בטוחה.
+                השלמתם גם את התרגול המסכם,
+                ועכשיו אתם מוכנים יותר לקראת הפעילות הבאה
+                במרכז הנוער!
+            </p>
+
+            <!-- Final game statistics -->
+            <div class="completion-stats">
+
+                <div class="completion-stat purple">
+
+                        <span
+                                class="completion-stat-icon"
+                                aria-hidden="true">
+                            🎯
+                        </span>
+
+                    <strong>4/4</strong>
+                    <span>מפגעים שטופלו</span>
+
+                </div>
+
+                <div class="completion-stat green">
+
+                        <span
+                                class="completion-stat-icon"
+                                aria-hidden="true">
+                            ⭐
+                        </span>
+
+                    <strong id="completionScore">0</strong>
+                    <span>נקודות שצברתם במשחק</span>
+
+                </div>
+
+            </div>
+
+            <!-- Learning takeaways -->
+            <div class="completion-learning">
+
+                <h3>מה למדנו היום?</h3>
+
+                <ul>
+
+                    <li>
+                            <span
+                                    class="learning-check"
+                                    aria-hidden="true">
+                                ✓
+                            </span>
+
+                        <span>
+                                מזהים מפגעים וסיכונים
+                                לפני תחילת הפעילות.
+                            </span>
+                    </li>
+
+                    <li>
+                            <span
+                                    class="learning-check"
+                                    aria-hidden="true">
+                                ✓
+                            </span>
+
+                        <span>
+                                עוצרים התנהגות מסוכנת
+                                ומרחיקים משתתפים מאזור שאינו בטוח.
+                            </span>
+                    </li>
+
+                    <li>
+                            <span
+                                    class="learning-check"
+                                    aria-hidden="true">
+                                ✓
+                            </span>
+
+                        <span>
+                                מדווחים לרכז ודואגים שהמפגע יטופל
+                                בצורה בטוחה לפני המשך הפעילות.
+                            </span>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <p class="completion-message">
+                💜 זכרו: בטיחות מתחילה בבדיקה טובה!
+            </p>
+
+            <button
+                    id="restartBtn"
+                    class="start-button completion-restart"
+                    type="button">
+
+                ↻ משחקים שוב
+            </button>
+
+        </div>
+    </section>
+
 </main>
 
+
+<!-- =========================================
+     GAME FEEDBACK MODAL
+     ========================================= -->
+
+<div
+        id="feedbackOverlay"
+        class="feedback-overlay"
+        hidden>
+
+    <div
+            class="feedback-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="feedbackTitle"
+            aria-describedby="feedbackDescription">
+
+        <button
+                id="closeFeedbackBtn"
+                class="feedback-close"
+                type="button"
+                aria-label="סגירת חלונית המשוב">
+
+            ×
+        </button>
+
+        <!-- Selected object illustration -->
+        <div
+                id="feedbackSticker"
+                class="feedback-sticker"
+                aria-hidden="true">
+            ✦
+        </div>
+
+        <span id="feedbackTag" class="feedback-tag">
+                בודקים את החפץ
+            </span>
+
+        <h2 id="feedbackTitle" tabindex="-1">
+            מה מצאתם?
+        </h2>
+
+        <p id="feedbackDescription"></p>
+
+        <!-- Dynamic question and answer options -->
+        <div id="questionArea">
+
+            <h3>מה נכון לעשות עכשיו?</h3>
+
+            <div
+                    id="answerOptions"
+                    class="answer-options">
+            </div>
+
+        </div>
+
+        <!-- Dynamic answer feedback -->
+        <div
+                id="answerResult"
+                class="answer-result"
+                role="status"
+                aria-live="polite"
+                hidden>
+        </div>
+
+        <button
+                id="feedbackContinueBtn"
+                class="start-button feedback-continue"
+                type="button"
+                hidden>
+
+            ממשיכים לחפש ←
+        </button>
+
+    </div>
+</div>
+
+
+<!-- =========================================
+     FOOTER
+     ========================================= -->
+
 <footer class="site-footer text-center">
-    <p>מרכז הנוער רוג'ום | מתחילים להדריך בבטחה</p>
+    <p>
+        מרכז הנוער רוג'ום | מתחילים להדריך בבטחה
+    </p>
 </footer>
 
 </body>

@@ -486,6 +486,15 @@
 
             </div>
 
+            <p id="roomScrollHint" class="room-scroll-hint">
+                החליקו את החדר ימינה ושמאלה כדי לראות את כולו, ולחצו על חפץ לבדיקה.
+                במקלדת: התמקדו בחדר והשתמשו בחיצים לגלילה, או עברו בין החפצים עם Tab.
+            </p>
+
+            <!-- Keep the room large enough for accurate touch selection. -->
+            <div class="room-viewport" role="region" tabindex="0"
+                 aria-label="תצוגת חדר הפעילות הניתנת לגלילה"
+                 aria-describedby="roomScrollHint">
             <!-- INTERACTIVE GAME ROOM -->
             <div
                     class="game-room"
@@ -606,6 +615,8 @@
                             alt=""
                             draggable="false">
                 </button>
+
+            </div>
 
             </div>
 

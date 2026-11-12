@@ -727,6 +727,21 @@ button:disabled {
    and sizes from legacy.css.
 */
 
+.room-scroll-hint {
+    display: none;
+}
+
+.room-viewport {
+    max-width: 100%;
+    min-width: 0;
+    padding: 8px 8px 24px;
+}
+
+.room-viewport:focus-visible {
+    outline: 3px solid var(--purple-dark);
+    outline-offset: 2px;
+}
+
 .game-room {
     position: relative;
 
@@ -1271,7 +1286,25 @@ button:disabled {
         font-size: 16px;
     }
 
-    .game-room {
+    .room-scroll-hint {
+        display: block;
+        color: var(--purple-dark);
+        font-size: 15px;
+        line-height: 1.6;
+        text-align: start;
+    }
+
+    .room-viewport {
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        border: 1px solid var(--purple);
+        border-radius: 12px;
+    }
+
+    .room-viewport .game-room {
+        width: 760px;
+        min-width: 760px;
+        max-width: none;
         border-width: 4px;
         border-radius: 10px;
 
@@ -1279,6 +1312,29 @@ button:disabled {
                 0 0 0 1px var(--purple),
                 4px 4px 0 var(--yellow);
     }
+
+    /* Visible, separate touch targets instead of overlapping enlarged stickers. */
+    .room-object {
+        min-width: 44px;
+        min-height: 44px;
+        outline: 1px dashed var(--purple-dark);
+        outline-offset: 1px;
+        background-color: rgba(255, 255, 255, 0.45);
+    }
+
+    .room-object:hover:not(:disabled),
+    .room-object:active {
+        transform: none;
+    }
+
+    .object-cable { width: 11%; }
+    .object-water { left: 73%; width: 10%; }
+    .object-bag { width: 12%; }
+    .object-scissors { left: 40%; width: 9%; }
+    .object-ball { width: 10%; }
+    .object-plant { width: 11%; }
+    .object-books { width: 10%; }
+    .object-pencils { width: 8%; }
 
     .feedback-dialog {
         width: min(94vw, 580px);

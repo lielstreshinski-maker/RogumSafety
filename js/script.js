@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentObject: null,
         currentButton: null,
         previousFocus: null,
-        wrongAttempt: false,
+        wrongAttempts: new Set(),
         assessmentVisited: false,
         assessmentCompleted: false
     };
@@ -438,7 +438,6 @@ document.addEventListener("DOMContentLoaded", () => {
         state.currentObject = objectId;
         state.currentButton = button;
         state.previousFocus = document.activeElement;
-        state.wrongAttempt = false;
 
         renderSticker(data);
 
@@ -493,7 +492,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!data || !data.hazard) return;
 
         if (index !== data.correct) {
-            state.wrongAttempt = true;
+            state.wrongAttempts.add(id);
 
             selectedButton.classList.add("wrong");
             selectedButton.disabled = true;
@@ -512,7 +511,7 @@ document.addEventListener("DOMContentLoaded", () => {
             button.disabled = true;
         });
 
-        const earned = state.wrongAttempt ? 5 : 10;
+        const earned = state.wrongAttempts.has(id) ? 5 : 10;
 
         if (!state.found.has(id)) {
             state.found.add(id);
@@ -862,15 +861,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     assessmentForm?.addEventListener("change", () => {
-        if (!state.assessmentCompleted) {
-            clearAssessmentFeedback();
-        }
+        clearAssessmentFeedback();
     });
 
     question3Input?.addEventListener("input", () => {
-        if (!state.assessmentCompleted) {
-            clearAssessmentFeedback();
-        }
+        clearAssessmentFeedback();
     });
 
     $("backToGameBtn")?.addEventListener("click", () => {
@@ -900,7 +895,7 @@ document.addEventListener("DOMContentLoaded", () => {
         state.currentObject = null;
         state.currentButton = null;
         state.previousFocus = null;
-        state.wrongAttempt = false;
+        state.wrongAttempts.clear();
 
         roomButtons.forEach((button) => {
             button.classList.remove("found", "is-handled");

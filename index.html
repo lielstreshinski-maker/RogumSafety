@@ -25,6 +25,9 @@
     <!-- Project stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- SCORM connection must load before the game controller. -->
+    <script src="js/SCORM_API_wrapper.js" defer></script>
+    <script src="js/lms.js" defer></script>
     <!-- Game controller -->
     <script src="js/script.js" defer></script>
 </head>
@@ -37,6 +40,11 @@
 
 <header class="site-header">
     <div class="container">
+        <div class="lms-banner">
+            <p id="learnerName">ברוכים הבאים ליחידת הבטיחות</p>
+            <p id="lmsStatus" role="status" aria-live="polite">בודקים חיבור למערכת הלמידה…</p>
+            <button id="lmsRetry" type="button" hidden>ניסיון שמירה נוסף</button>
+        </div>
 
         <div class="header-top">
 
@@ -449,6 +457,7 @@
             </p>
 
             <!-- GAME DASHBOARD -->
+            <p class="room-hint">כל מפגע שווה עד 10 נקודות. כל תשובה שגויה חדשה שנבדקת מפחיתה 5 נקודות באותו מפגע, עד מינימום 0.</p>
             <div class="game-dashboard">
 
                 <div class="game-stat">
@@ -741,6 +750,10 @@
             </p>
 
             <form id="assessmentForm" novalidate>
+                <p>ניקוד השאלון שנותר: <strong id="assessmentPoints">60</strong> מתוך 60.
+                    כל שאלה שווה עד 20 נקודות. תשובה שגויה או חלקית שנבדקת מפחיתה 5 נקודות בשאלה, עד מינימום 0.
+                    בדיקה חוזרת ללא שינוי אינה מפחיתה שוב. שדה חסר או מספר שאינו בטווח 1–10 או אינו שלם אינם גוררים הפחתה.
+                    לסיום יש לענות נכון על כל השאלות.</p>
 
                 <!-- QUESTION 1 -->
                 <fieldset class="assessment-question">
@@ -1050,7 +1063,7 @@
                     </span>
 
                     <strong id="completionScore">0</strong>
-                    <span>נקודות שצברתם במשחק</span>
+                    <span>נקודות במשחק ובשאלון מתוך 100</span>
                 </div>
 
             </div>

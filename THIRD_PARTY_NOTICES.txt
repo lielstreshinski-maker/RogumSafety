@@ -1,0 +1,6 @@
+pipwerks SCORM API Wrapper
+Copyright (c) Philip Hutchison
+MIT-style license: http://pipwerks.mit-license.org/
+Source: https://github.com/pipwerks/scorm-api-wrapper
+Revision: 82e455b4032ee08febf64d2fa2bf1aacaebaa446
+Original wrapper included without modification; license notice retained.

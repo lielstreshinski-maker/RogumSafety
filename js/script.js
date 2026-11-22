@@ -177,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
         currentObject: null,
         currentButton: null,
         previousFocus: null,
-        wrongAttempts: new Set(),
         assessmentVisited: false,
         assessmentCompleted: false
     };
@@ -308,6 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         focusWithoutScroll(titles[name]);
+        window.RogumLearning.save();
     }
 
     navToggle?.addEventListener("click", () => {
@@ -491,8 +491,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!data || !data.hazard) return;
 
+        if (!window.RogumLearning.check(`game_${id}`, String.fromCharCode(97 + index))) return;
+
         if (index !== data.correct) {
-            state.wrongAttempts.add(id);
 
             selectedButton.classList.add("wrong");
             selectedButton.disabled = true;
@@ -511,7 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
             button.disabled = true;
         });
 
-        const earned = state.wrongAttempts.has(id) ? 5 : 10;
+        const earned = window.RogumLearning.points(`game_${id}`);
 
         if (!state.found.has(id)) {
             state.found.add(id);
@@ -824,6 +825,17 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+        // Report only valid answers; repeated unchanged checks are deduplicated.
+        if (selectedQ1) window.RogumLearning.check("assessment_equipment", selectedQ1.value);
+        if (selectedQ2.length) {
+            const codes = { stop: "a", move: "b", child: "c", report: "d" };
+            window.RogumLearning.check("assessment_actions", selectedQ2.map(value => codes[value]).sort().join(","));
+        }
+        if (q3 !== "" && question3Input.validity.valid && Number.isInteger(Number(q3)) && Number(q3) >= 1 && Number(q3) <= 10) {
+            window.RogumLearning.check("assessment_steps", String(Number(q3)));
+        }
+        setText($("assessmentPoints"), window.RogumLearning.assessmentPoints());
+
         // Summary
 
         assessmentSummary.hidden = false;
@@ -858,14 +870,17 @@ document.addEventListener("DOMContentLoaded", () => {
             behavior: "auto",
             block: "nearest"
         });
+        window.RogumLearning.save();
     });
 
     assessmentForm?.addEventListener("change", () => {
         clearAssessmentFeedback();
+        window.RogumLearning.save();
     });
 
     question3Input?.addEventListener("input", () => {
         clearAssessmentFeedback();
+        window.RogumLearning.save();
     });
 
     $("backToGameBtn")?.addEventListener("click", () => {
@@ -874,8 +889,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     finishAssessment?.addEventListener("click", () => {
         if (!state.assessmentCompleted) return;
+        if (!window.RogumLearning.complete()) return;
 
-        setText(completionScore, state.score);
+        setText(completionScore, state.score + window.RogumLearning.assessmentPoints());
         showScreen("completion");
     });
 
@@ -895,7 +911,6 @@ document.addEventListener("DOMContentLoaded", () => {
         state.currentObject = null;
         state.currentButton = null;
         state.previousFocus = null;
-        state.wrongAttempts.clear();
 
         roomButtons.forEach((button) => {
             button.classList.remove("found", "is-handled");
@@ -925,6 +940,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     $("restartBtn")?.addEventListener("click", () => {
+        if (!window.RogumLearning.beginPractice()) return;
+        setText($("assessmentPoints"), "60");
         resetGame();
         state.gameStarted = true;
         showScreen("game");
@@ -935,6 +952,51 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
 
     resetGame();
+    const restored = window.RogumLearning.restored();
+    if (restored) {
+        state.highestUnlocked = restored.highestUnlocked;
+        state.gameStarted = restored.gameStarted;
+        state.assessmentVisited = restored.assessmentVisited;
+        state.found = new Set(window.RogumLearning.handled());
+        state.score = [...state.found].reduce((sum, id) => sum + window.RogumLearning.points(`game_${id}`), 0);
+        roomButtons.forEach(button => {
+            if (state.found.has(button.dataset.object)) hideHandledObject(button);
+        });
+        assessmentForm.querySelectorAll('input[name="question1"]').forEach(input => { input.checked = input.value === restored.q1; });
+        assessmentForm.querySelectorAll('input[name="question2"]').forEach(input => { input.checked = restored.q2.includes(input.value); });
+        question3Input.value = restored.q3;
+        // Revalidate without re-submitting or duplicating interaction records.
+        const correctDraft = restored.q1 === "b" && restored.q2.length === 3 &&
+            ["stop", "move", "report"].every(value => restored.q2.includes(value)) && Number(restored.q3) === 3;
+        state.assessmentCompleted = restored.checked && correctDraft;
+        finishAssessment.hidden = !state.assessmentCompleted;
+        checkAssessment.hidden = state.assessmentCompleted;
+        if (state.assessmentCompleted) {
+            assessmentSummary.hidden = false;
+            assessmentSummary.classList.add("all-correct");
+            assessmentSummary.textContent = "התשובות הנכונות שוחזרו. אפשר לסיים את היחידה.";
+        }
+        setText($("assessmentPoints"), window.RogumLearning.assessmentPoints());
+        setText(transitionScore, state.score);
+        setText(completionScore, state.score + window.RogumLearning.assessmentPoints());
+        updateProgress();
+    }
+    window.RogumLearning.bind(() => ({
+        screen: state.screen,
+        highestUnlocked: state.highestUnlocked,
+        gameStarted: state.gameStarted,
+        assessmentVisited: state.assessmentVisited,
+        checked: state.assessmentCompleted,
+        q1: assessmentForm.querySelector('input[name="question1"]:checked')?.value || "",
+        q2: [...assessmentForm.querySelectorAll('input[name="question2"]:checked')].map(input => input.value),
+        q3: question3Input.value.slice(0, 32)
+    }));
     updateNavigation();
-    showScreen("welcome");
+    let initialScreen = restored?.screen || "welcome";
+    if (state.found.size === totalHazards && initialScreen === "game") {
+        state.highestUnlocked = 4;
+        initialScreen = "transition";
+    }
+    if (window.RogumLearning.isDone()) initialScreen = "completion";
+    showScreen(initialScreen);
 });

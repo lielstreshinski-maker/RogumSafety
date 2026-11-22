@@ -12,6 +12,21 @@
 
 @import url("./legacy.css");
 
+.lms-banner {
+    padding: 12px 16px;
+    margin-block: 12px;
+    border: 1px solid #7561B5;
+    border-radius: 10px;
+    background: #F5F1FC;
+    color: #302D43;
+    text-align: start;
+    overflow-wrap: anywhere;
+}
+
+.lms-banner p { margin: 0; }
+#learnerName { font-weight: 700; }
+#lmsStatus { margin-top: 4px; font-size: 0.95rem; }
+
 
 /* ==========================================
    01 — DESIGN SYSTEM

@@ -1,9 +1,13 @@
-<?xml version='1.0' encoding='utf-8'?>
-<manifest xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2" xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2" identifier="ROGUM_SAFETY_M3" version="3.0">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+          xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+          identifier="ROGUM_SAFETY_M3"
+          version="3.0">
   <metadata>
     <schema>ADL SCORM</schema>
     <schemaversion>1.2</schemaversion>
   </metadata>
+
   <organizations default="ORG_ROGUM">
     <organization identifier="ORG_ROGUM">
       <title>Rogum Safety</title>
@@ -12,11 +16,14 @@
       </item>
     </organization>
   </organizations>
+
   <resources>
-    <resource identifier="RES_ROGUM" type="webcontent" adlcp:scormtype="sco" href="index.html">
+    <resource identifier="RES_ROGUM"
+              type="webcontent"
+              adlcp:scormtype="sco"
+              href="index.html">
       <file href="index.html" />
       <file href="THIRD_PARTY_NOTICES.txt" />
-      <file href="css/legacy.css" />
       <file href="css/style.css" />
       <file href="js/lms.js" />
       <file href="js/SCORM_API_wrapper.js" />

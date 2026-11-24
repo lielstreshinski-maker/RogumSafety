@@ -1,18 +1,40 @@
-# Rogum Safety – Programming 3 Midterm Project
+# Rogum Safety | מתחילים להדריך בבטחה
 
-Interactive web-based safety training for new youth center volunteers.
+לומדת בטיחות אינטראקטיבית לצוותי ההדרכה וההתנדבות במרכז הנוער רוג'ום. הלומדה פותחה במסגרת פרויקט אמצע בקורס תכנות 3 ב־HIT, קבוצה 20.
 
-## Technologies
-- HTML5
-- CSS3
-- JavaScript
-- Bootstrap 5
+## מה לומדים?
 
-## Project Structure
-The project is currently in its initial setup stage.
+הלומדה מציגה כללים להכנת חדר פעילות בטוח. בתרגול סורקים את החדר, מזהים ארבעה מפגעים ומקבלים משוב על הסיכון ועל הפעולה הראשונית המתאימה. שאלון הסיכום נפתח לאחר בדיקת כל ארבעת המפגעים וצבירת 45 שניות במסך החדר. הספירה נעצרת במעבר ללשונית או לחלון אחר.
 
-## Collaboration
-This project is developed collaboratively using Git and GitHub.
+הציון המרבי הוא 100 נקודות: 40 במשחק ו־60 בשאלון הסיכום.
 
-## Course
-Programming 3 – Midterm Project
+## הרצה מקומית
+
+1. פותחים את תיקיית הפרויקט ב־Rider.
+2. פותחים את `index.html` בדפדפן.
+3. מתחילים את הלומדה ובודקים את רצף המסכים.
+
+בהרצה מקומית הלומדה פועלת במצב תרגול. הציון וההתקדמות אינם נשלחים ל־Moodle. טעינת Bootstrap וגופן Heebo דורשת חיבור לאינטרנט.
+
+## הרצה ב־Moodle
+
+1. אורזים את קובצי הלומדה ל־ZIP. הקבצים `imsmanifest.xml` ו־`index.html` צריכים להיות בשורש הארכיון, לצד התיקיות `css`, `js` ו־`assets`.
+2. מעלים את ה־ZIP כפעילות SCORM בקורס ב־Moodle.
+3. פותחים את הפעילות ובודקים את הברכה האישית, שמירת ההתקדמות בחדר, שחזור ההתקדמות לאחר יציאה וחזרה, ודיווח על תשובות, ציון סופי וסטטוס מעבר.
+
+## מבנה הפרויקט
+
+| קובץ או תיקייה | תפקיד |
+| --- | --- |
+| `index.html` | המסכים, חדר התרגול ושאלון הסיכום |
+| `css/style.css` | עיצוב הלומדה והתאמה לגדלי מסך |
+| `js/script.js` | ניווט, משוב, טיימר ותנאי פתיחת השאלון |
+| `js/lms.js` | ניקוד, שמירה, שחזור התקדמות ודיווח ל־Moodle |
+| `js/SCORM_API_wrapper.js` | ספריית pipwerks לתקשורת עם SCORM |
+| `imsmanifest.xml` | תיאור חבילת SCORM 1.2 ונקודת הכניסה ללומדה |
+| `assets/` | תמונות ואיורים המשמשים בלומדה |
+| `THIRD_PARTY_NOTICES.txt` | פרטי הספרייה החיצונית ורישיונה |
+
+## טכנולוגיות וקרדיטים
+
+הלומדה פותחה ב־HTML, CSS ו־JavaScript. היא משתמשת ב־Bootstrap, בגופן Heebo ובספריית pipwerks SCORM API Wrapper. פרטי הרישיון של ספריית SCORM מופיעים ב־[THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt).

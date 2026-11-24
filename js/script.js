@@ -1,100 +1,70 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
-    // ==========================================
-    // ROGUM SAFETY — GAME CONTROLLER
-    // Complete replacement for script.js
-    // ==========================================
-
     const $ = (id) => document.getElementById(id);
+    const learning = window.RogumLearning;
 
     const screens = {
-        welcome: $("welcomeScreen"),
-        intro: $("introScreen"),
-        preparation: $("preparationScreen"),
-        game: $("gameScreen"),
-        transition: $("gameTransitionScreen"),
-        assessment: $("assessmentScreen"),
-        completion: $("completionScreen")
+        welcome: [$("welcomeScreen"), $("welcome-title")],
+        intro: [$("introScreen"), $("intro-title")],
+        preparation: [$("preparationScreen"), $("preparation-title")],
+        game: [$("gameScreen"), $("game-title")],
+        transition: [$("gameTransitionScreen"), $("transition-title")],
+        assessment: [$("assessmentScreen"), $("assessment-title")],
+        completion: [$("completionScreen"), $("completion-title")]
     };
 
-    const titles = {
-        welcome: $("welcome-title"),
-        intro: $("intro-title"),
-        preparation: $("preparation-title"),
-        game: $("game-title"),
-        transition: $("transition-title"),
-        assessment: $("assessment-title"),
-        completion: $("completion-title")
-    };
-
+    const assessmentScreens = ["transition", "assessment", "completion"];
     const navigationOrder = [
-        "welcome",
-        "intro",
-        "preparation",
-        "game",
-        "assessment"
+        "welcome", "intro", "preparation", "game", "assessment"
     ];
 
     const navToggle = $("navToggleBtn");
     const navigation = $("mainNavigation");
     const navButtons = [...document.querySelectorAll(".nav-step")];
-
     const roomButtons = [...document.querySelectorAll(".room-object")];
+    const roomToAssessment = $("roomToAssessmentBtn");
+    const continueToAssessment = $("continueToAssessmentBtn");
+    const unlockStatus = $("assessmentUnlockStatus");
 
     const overlay = $("feedbackOverlay");
     const feedbackTitle = $("feedbackTitle");
-    const feedbackTag = $("feedbackTag");
-    const feedbackSticker = $("feedbackSticker");
-    const feedbackDescription = $("feedbackDescription");
     const questionArea = $("questionArea");
     const answerOptions = $("answerOptions");
     const answerResult = $("answerResult");
+    const hazardExplanation = $("hazardExplanation");
     const feedbackContinue = $("feedbackContinueBtn");
-    const feedbackClose = $("closeFeedbackBtn");
-
-    const hazardCounter = $("hazardCounter");
-    const hazardProgress = $("hazardProgress");
-    const scoreCounter = $("scoreCounter");
-    const transitionScore = $("transitionScore");
-    const completionScore = $("completionScore");
 
     const assessmentForm = $("assessmentForm");
     const assessmentSummary = $("assessmentSummary");
+    const question1Inputs = [...assessmentForm.querySelectorAll('input[name="question1"]')];
+    const question2Inputs = [...assessmentForm.querySelectorAll('input[name="question2"]')];
     const question3Input = $("question3");
     const checkAssessment = $("checkAssessmentBtn");
     const finishAssessment = $("finishAssessmentBtn");
-
     const questionFeedback = [
         $("question1Feedback"),
         $("question2Feedback"),
         $("question3Feedback")
     ];
 
-    // ==========================================
-    // GAME CONTENT
-    // ==========================================
-
+    // One dialog uses these details to give feedback for each object in the room.
     const objects = {
         cable: {
             title: "כבל חשמל במעבר",
-            sticker: "assets/images/stickers/cable.png",
-            hazard: true,
+            sticker: "cable.png",
             description: "כבל חשמל מונח על הרצפה ועלול לגרום למעידה.",
             answers: [
-                "להשאיר אותו ולבקש מהחניכים להיזהר",
-                "להרחיק את החניכים ולדווח לרכז לטיפול בטוח",
+                "להשאיר את הכבל ולבקש מהמשתתפים להיזהר",
+                "להרחיק את המשתתפים ולדווח לרכז לטיפול בטוח",
                 "למשוך את הכבל במהירות"
             ],
             correct: 1,
             explanation: "מרחיקים את המשתתפים מהסכנה ומדווחים לרכז כדי שהכבל יטופל בבטחה."
         },
-
         water: {
             title: "מים על הרצפה",
-            sticker: "assets/images/stickers/water.png",
-            hazard: true,
+            sticker: "water.png",
             description: "על הרצפה יש מים שעלולים לגרום להחלקה.",
             answers: [
                 "להמשיך בפעילות כרגיל",
@@ -104,136 +74,119 @@ document.addEventListener("DOMContentLoaded", () => {
             correct: 2,
             explanation: "יש למנוע גישה לאזור הרטוב ולדאוג לטיפול בו לפני המשך הפעילות."
         },
-
         bag: {
             title: "תיק שחוסם מעבר",
-            sticker: "assets/images/stickers/backpack.png",
-            hazard: true,
+            sticker: "backpack.png",
             description: "תיק מונח באמצע המעבר ועלול לגרום למעידה.",
             answers: [
                 "לדאוג לפינוי התיק למקום אחסון מתאים",
                 "להשאיר את התיק כי הוא קטן",
-                "לבקש מהחניכים לדלג מעליו"
+                "לבקש מהמשתתפים לדלג מעליו"
             ],
             correct: 0,
             explanation: "מעברים צריכים להישאר פנויים. יש לדאוג לפינוי התיק בצורה בטוחה."
         },
-
         scissors: {
             title: "מספריים על השולחן",
-            sticker: "assets/images/stickers/scissors.png",
-            hazard: true,
+            sticker: "scissors.png",
             description: "מספריים פתוחים הושארו על שולחן הפעילות ללא השגחה.",
             answers: [
-                "להשאיר אותם על השולחן",
-                "לזרוק אותם לרצפה",
+                "להשאיר את המספריים על השולחן",
+                "לזרוק את המספריים לרצפה",
                 "לדאוג לאחסון סגור ובטוח לפי נהלי המרכז"
             ],
             correct: 2,
             explanation: "ציוד חד צריך להיות מאוחסן בבטחה כדי למנוע פציעות."
         },
-
         ball: {
             title: "כדור באזור המשחק",
-            sticker: "assets/images/stickers/ball.png",
-            hazard: false,
+            sticker: "ball.png",
             description: "הכדור מונח באזור המשחק המיועד, ואינו חוסם מעבר.",
-            explanation: "במיקום הנוכחי הכדור אינו מפגע. אם הוא יתגלגל למעבר, נצטרך לפנות אותו."
+            explanation: "במיקום הנוכחי הכדור אינו מפגע. אם הוא יתגלגל למעבר, יהיה צורך לפנות אותו."
         },
-
         plant: {
             title: "עציץ בפינת החדר",
-            sticker: "assets/images/stickers/plant.png",
-            hazard: false,
+            sticker: "plant.png",
             description: "העציץ יציב, נמצא בפינת החדר ואינו מפריע לתנועה.",
             explanation: "אין כאן מפגע כרגע. חשוב לוודא שהעציץ יציב ואינו חוסם מעבר."
         },
-
         books: {
             title: "ספרים על המדף",
-            sticker: "assets/images/stickers/books.png",
-            hazard: false,
+            sticker: "books.png",
             description: "הספרים מסודרים על המדף ואינם עומדים ליפול.",
             explanation: "ציוד שמאוחסן בצורה מסודרת ויציבה מסייע לשמור על חדר בטוח."
         },
-
         pencils: {
             title: "כלי כתיבה על השולחן",
-            sticker: "assets/images/stickers/pencils.png",
-            hazard: false,
+            sticker: "pencils.png",
             description: "כלי הכתיבה נמצאים על שולחן הפעילות באופן מסודר.",
             explanation: "כלי הכתיבה אינם מפגע במצבם הנוכחי. חשוב להחזיר אותם למקום בסיום השימוש."
         }
     };
 
-    const totalHazards = 4;
+    const hazardIds = Object.keys(objects).filter((id) => objects[id].answers);
+    const requiredRoomMs = 45_000;
+    const correctActions = ["stop", "move", "report"];
+    const actionCodes = { stop: "a", move: "b", child: "c", report: "d" };
 
     const state = {
         screen: "welcome",
         highestUnlocked: 0,
         gameStarted: false,
-        found: new Set(),
-        score: 0,
+        reviewedHazards: new Set(),
+        activeRoomMs: 0,
+        roomStartedAt: null,
+        lastSavedRoomMs: 0,
         currentObject: null,
-        currentButton: null,
         previousFocus: null,
         assessmentVisited: false,
         assessmentCompleted: false
     };
 
-    // ==========================================
-    // ACCESSIBILITY HELPERS
-    // ==========================================
-
     function focusWithoutScroll(element) {
-        if (!element) return;
-
-        element.focus({
-            preventScroll: true
-        });
+        element?.focus({ preventScroll: true });
     }
 
-    function visibleFocusableElements(container) {
-        return [...container.querySelectorAll(
-            'button:not([disabled]), input:not([disabled]), ' +
-            'select:not([disabled]), textarea:not([disabled]), ' +
-            'a[href], [tabindex]:not([tabindex="-1"])'
-        )].filter((element) => {
-            return !element.hidden &&
-                element.getClientRects().length > 0;
-        });
+    function gameScore() {
+        return learning.handled().reduce((score, id) => {
+            return score + learning.points(`game_${id}`);
+        }, 0);
     }
 
-    function setText(element, value) {
-        if (element) {
-            element.textContent = value;
-        }
+    // We use the clock to count room time so a late timer callback does not change the total.
+    function elapsedRoomMs(now = performance.now()) {
+        const currentPeriod = state.roomStartedAt === null
+            ? 0
+            : now - state.roomStartedAt;
+
+        return Math.min(requiredRoomMs, state.activeRoomMs + currentPeriod);
     }
 
-    // ==========================================
-    // NAVIGATION
-    // ==========================================
-
-    function navigationIndex(screen) {
-        if (screen === "transition" || screen === "completion") {
-            return 4;
-        }
-
-        return navigationOrder.indexOf(screen);
+    function assessmentIsAvailable() {
+        return learning.isDone() || (
+            state.reviewedHazards.size === hazardIds.length &&
+            elapsedRoomMs() >= requiredRoomMs
+        );
     }
 
-    function updateNavigation() {
-        const active = navigationIndex(state.screen);
+    function updateNavigation(available = assessmentIsAvailable()) {
+        const activeStep = assessmentScreens.includes(state.screen)
+            ? "assessment"
+            : state.screen;
 
         navButtons.forEach((button) => {
             const step = button.dataset.navStep;
-            const index = navigationOrder.indexOf(step);
-            const unlocked = index <= state.highestUnlocked;
-            const selected = index === active;
+            const unlocked = step === "assessment"
+                ? available
+                : navigationOrder.indexOf(step) <= state.highestUnlocked;
+            const selected = step === activeStep;
+            const label = button.querySelector(".nav-step-label").textContent.trim();
+            const lock = button.querySelector(".nav-lock");
 
             button.disabled = !unlocked;
             button.classList.toggle("locked", !unlocked);
             button.classList.toggle("active", selected);
+            button.setAttribute("aria-label", unlocked ? label : `${label} - השלב עדיין נעול`);
 
             if (selected) {
                 button.setAttribute("aria-current", "step");
@@ -241,762 +194,560 @@ document.addEventListener("DOMContentLoaded", () => {
                 button.removeAttribute("aria-current");
             }
 
-            const lock = button.querySelector(".nav-lock");
             if (lock) lock.hidden = unlocked;
-
-            const label = button.querySelector(".nav-step-label");
-
-            if (label) {
-                const text = label.textContent.trim();
-
-                button.setAttribute(
-                    "aria-label",
-                    unlocked ? text : `${text} - השלב עדיין נעול`
-                );
-            }
         });
     }
 
-    function unlock(screen) {
-        const index = navigationOrder.indexOf(screen);
-
-        if (index > state.highestUnlocked) {
-            state.highestUnlocked = index;
-        }
-
-        updateNavigation();
-    }
-
-    function closeNavigation() {
-        if (!navigation || !navToggle) return;
-
-        navigation.classList.remove("is-open");
-        navToggle.setAttribute("aria-expanded", "false");
-        navToggle.setAttribute(
-            "aria-label",
-            "פתיחת תפריט הניווט"
-        );
-
-        const icon = navToggle.querySelector(".nav-toggle-icon");
-        if (icon) icon.textContent = "☰";
-    }
-
-    function showScreen(name) {
-        const target = screens[name];
-        if (!target) return;
-
-        Object.values(screens).forEach((screen) => {
-            if (screen) screen.hidden = true;
-        });
-
-        target.hidden = false;
-        state.screen = name;
-
-        if (name === "assessment") {
-            state.assessmentVisited = true;
-        }
-
-        updateNavigation();
-        closeNavigation();
-
-        // Scroll only when intentionally changing screens.
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "instant"
-        });
-
-        focusWithoutScroll(titles[name]);
-        window.RogumLearning.save();
-    }
-
-    navToggle?.addEventListener("click", () => {
-        const open = navigation.classList.toggle("is-open");
-
+    function setNavigationOpen(open) {
+        navigation.classList.toggle("is-open", open);
         navToggle.setAttribute("aria-expanded", String(open));
         navToggle.setAttribute(
             "aria-label",
             open ? "סגירת תפריט הניווט" : "פתיחת תפריט הניווט"
         );
+        navToggle.querySelector(".nav-toggle-icon").textContent = open ? "✕" : "☰";
+    }
 
-        const icon = navToggle.querySelector(".nav-toggle-icon");
-        if (icon) icon.textContent = open ? "✕" : "☰";
+    function updateRoomProgress() {
+        const reviewed = state.reviewedHazards.size;
+        const secondsLeft = Math.ceil((requiredRoomMs - elapsedRoomMs()) / 1000);
+        const available = assessmentIsAvailable();
+        const progress = $("hazardProgress");
+
+        $("hazardCounter").textContent = `${reviewed} מתוך ${hazardIds.length}`;
+        $("scoreCounter").textContent = gameScore();
+        $("roomTimeRemaining").textContent = secondsLeft;
+        progress.style.width = `${reviewed / hazardIds.length * 100}%`;
+        progress.setAttribute("aria-valuenow", String(reviewed));
+
+        const availabilityChanged = roomToAssessment.disabled === available;
+        roomToAssessment.disabled = !available;
+        continueToAssessment.disabled = !available;
+
+        if (availabilityChanged) updateNavigation(available);
+
+        let message = "השאלון ייפתח לאחר בדיקת המפגעים והשלמת זמן הסריקה.";
+        if (available) {
+            message = "השאלון זמין עכשיו. אפשר להמשיך לשאלון הסיכום.";
+        } else if (reviewed === hazardIds.length) {
+            message = "כל המפגעים נבדקו. עד לסיום הסריקה, אפשר לבדוק היכן המעבר נשאר פנוי.";
+        } else if (secondsLeft === 0) {
+            message = "זמן הסריקה הושלם. עוד נותר לבדוק את המפגעים שלא סומנו.";
+        }
+
+        if (unlockStatus.textContent.trim() !== message) {
+            unlockStatus.textContent = message;
+        }
+    }
+
+    // Time counts while the room is visible and the browser window has focus.
+    function syncRoomClock() {
+        const now = performance.now();
+
+        if (state.roomStartedAt !== null) {
+            state.activeRoomMs = elapsedRoomMs(now);
+        }
+
+        const countTime = state.gameStarted &&
+            state.screen === "game" &&
+            document.visibilityState === "visible" &&
+            document.hasFocus() &&
+            state.activeRoomMs < requiredRoomMs;
+
+        state.roomStartedAt = countTime ? now : null;
+        updateRoomProgress();
+    }
+
+    function saveRoomProgress() {
+        const elapsed = Math.floor(elapsedRoomMs());
+        if (elapsed !== state.lastSavedRoomMs) {
+            state.lastSavedRoomMs = elapsed;
+            learning.save();
+        }
+    }
+
+    function showScreen(name) {
+        if (assessmentScreens.includes(name) && !assessmentIsAvailable()) {
+            return;
+        }
+
+        Object.entries(screens).forEach(([key, [section]]) => {
+            section.hidden = key !== name;
+        });
+
+        state.screen = name;
+        if (name === "assessment") state.assessmentVisited = true;
+        if (name === "transition") $("transitionScore").textContent = gameScore();
+        if (name === "completion") {
+            $("completionScore").textContent = gameScore() + learning.assessmentPoints();
+        }
+
+        setNavigationOpen(false);
+        syncRoomClock();
+        updateNavigation();
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        focusWithoutScroll(screens[name][1]);
+        learning.save();
+    }
+
+    function visitStep(name) {
+        state.highestUnlocked = Math.max(
+            state.highestUnlocked,
+            navigationOrder.indexOf(name)
+        );
+        showScreen(name);
+    }
+
+    function openAssessmentStep() {
+        if (!assessmentIsAvailable()) return;
+
+        if (learning.isDone() || state.screen === "completion") {
+            showScreen("completion");
+        } else if (state.assessmentVisited) {
+            showScreen("assessment");
+        } else {
+            showScreen("transition");
+        }
+    }
+
+    navToggle.addEventListener("click", () => {
+        setNavigationOpen(!navigation.classList.contains("is-open"));
     });
 
     navButtons.forEach((button) => {
         button.addEventListener("click", () => {
+            if (button.disabled || !overlay.hidden) return;
+
             const target = button.dataset.navStep;
-            const index = navigationOrder.indexOf(target);
-
-            if (index < 0 || index > state.highestUnlocked) {
-                return;
-            }
-
             if (target === "assessment") {
-                if (state.assessmentCompleted) {
-                    showScreen("completion");
-                } else if (state.assessmentVisited) {
-                    showScreen("assessment");
-                } else {
-                    showScreen("transition");
-                }
-                return;
+                openAssessmentStep();
+            } else {
+                showScreen(target);
             }
-
-            showScreen(target);
         });
     });
 
-    // ==========================================
-    // BASIC SCREEN BUTTONS
-    // ==========================================
-
-    $("startBtn")?.addEventListener("click", () => {
-        unlock("intro");
-        showScreen("intro");
+    $("startBtn").addEventListener("click", () => visitStep("intro"));
+    $("continueBtn").addEventListener("click", () => visitStep("preparation"));
+    $("backBtn").addEventListener("click", () => showScreen("welcome"));
+    $("backToIntroBtn").addEventListener("click", () => showScreen("intro"));
+    $("backToPreparationBtn").addEventListener("click", () => showScreen("preparation"));
+    $("practiceBtn").addEventListener("click", () => {
+        state.gameStarted = true;
+        visitStep("game");
     });
 
-    $("continueBtn")?.addEventListener("click", () => {
-        unlock("preparation");
-        showScreen("preparation");
-    });
+    roomToAssessment.addEventListener("click", openAssessmentStep);
+    continueToAssessment.addEventListener("click", () => showScreen("assessment"));
+    $("backToGameBtn").addEventListener("click", () => showScreen("game"));
 
-    $("backBtn")?.addEventListener("click", () => {
-        showScreen("welcome");
-    });
-
-    $("backToIntroBtn")?.addEventListener("click", () => {
-        showScreen("intro");
-    });
-
-    $("practiceBtn")?.addEventListener("click", () => {
-        if (!state.gameStarted) {
-            resetGame();
-            state.gameStarted = true;
-        }
-
-        unlock("game");
-        showScreen("game");
-    });
-
-    $("backToPreparationBtn")?.addEventListener("click", () => {
-        showScreen("preparation");
-    });
-
-    $("continueToAssessmentBtn")?.addEventListener("click", () => {
-        if (state.found.size !== totalHazards) return;
-        showScreen("assessment");
-    });
-
-    // ==========================================
-    // GAME PROGRESS
-    // ==========================================
-
-    function updateProgress() {
-        const found = state.found.size;
-        const percentage = found / totalHazards * 100;
-
-        setText(hazardCounter, `${found} מתוך ${totalHazards}`);
-        setText(scoreCounter, state.score);
-
-        if (hazardProgress) {
-            hazardProgress.style.width = `${percentage}%`;
-            hazardProgress.setAttribute("aria-valuenow", found);
-        }
+    function onRoomFocusChanged() {
+        syncRoomClock();
+        saveRoomProgress();
     }
 
-    // ==========================================
-    // FEEDBACK MODAL
-    // ==========================================
+    document.addEventListener("visibilitychange", onRoomFocusChanged);
+    window.addEventListener("blur", onRoomFocusChanged);
+    window.addEventListener("focus", onRoomFocusChanged);
+    window.addEventListener("pageshow", onRoomFocusChanged);
 
-    function renderSticker(data) {
-        feedbackSticker.replaceChildren();
+    // Save at intervals so we can resume without asking Moodle to save on every tick.
+    window.setInterval(() => {
+        if (state.roomStartedAt === null) return;
+
+        syncRoomClock();
+        if (state.activeRoomMs === requiredRoomMs ||
+            state.activeRoomMs - state.lastSavedRoomMs >= 5000) {
+            saveRoomProgress();
+        }
+    }, 250);
+
+    function renderReviewedObjects() {
+        roomButtons.forEach((button) => {
+            const reviewed = state.reviewedHazards.has(button.dataset.object);
+            const label = button.dataset.originalLabel;
+
+            button.classList.toggle("found", reviewed);
+            button.setAttribute("aria-label", reviewed ? `${label} - נבדק` : label);
+        });
+    }
+
+    function setAnswerResult(message, isError = false) {
+        answerResult.textContent = message;
+        answerResult.classList.toggle("error", isError);
+        answerResult.hidden = false;
+    }
+
+    // Learners can read the explanation and continue after any checked answer.
+    function showHazardExplanation(data) {
+        $("hazardExplanationText").textContent = data.explanation;
+        hazardExplanation.hidden = false;
+        feedbackContinue.hidden = false;
+    }
+
+    function checkGameAnswer(id, index, selectedButton) {
+        const data = objects[id];
+        const response = String.fromCharCode(97 + index);
+
+        if (!learning.check(`game_${id}`, response)) return;
+
+        showHazardExplanation(data);
+
+        if (index === data.correct) {
+            selectedButton.classList.add("correct");
+            answerOptions.querySelectorAll("button").forEach((button) => {
+                button.disabled = true;
+            });
+            const earned = learning.points(`game_${id}`);
+            setAnswerResult(`נכון! ניקוד המפגע: ${earned} מתוך 10.`);
+        } else {
+            selectedButton.classList.add("wrong");
+            selectedButton.disabled = true;
+            setAnswerResult("לא בדיוק. אפשר לקרוא את ההסבר, לנסות שוב או לחזור לחדר.", true);
+        }
+
+        updateRoomProgress();
+        focusWithoutScroll(feedbackContinue);
+    }
+
+    function openFeedback(id, button) {
+        const data = objects[id];
+        if (!data || !overlay.hidden) return;
+
+        state.currentObject = id;
+        state.previousFocus = button;
+        feedbackTitle.textContent = data.title;
+        $("feedbackDescription").textContent = data.description;
+        $("feedbackTag").textContent = data.answers ? "נמצא מפגע" : "בדיקת חפץ בטוח";
 
         const image = document.createElement("img");
-        image.src = data.sticker;
+        image.src = `assets/images/stickers/${data.sticker}`;
         image.alt = "";
         image.draggable = false;
         image.className = "feedback-object-image";
-
-        feedbackSticker.appendChild(image);
-    }
-
-    function setAnswerResult(message, type = "success") {
-        answerResult.textContent = message;
-        answerResult.hidden = false;
-
-        answerResult.classList.toggle("error", type === "error");
-        answerResult.setAttribute("role", "status");
-        answerResult.setAttribute("aria-live", "polite");
-    }
-
-    function openFeedback(objectId, button) {
-        const data = objects[objectId];
-
-        if (!data || state.found.has(objectId)) return;
-
-        state.currentObject = objectId;
-        state.currentButton = button;
-        state.previousFocus = document.activeElement;
-
-        renderSticker(data);
-
-        setText(feedbackTitle, data.title);
-        setText(feedbackDescription, data.description);
+        $("feedbackSticker").replaceChildren(image);
 
         answerOptions.replaceChildren();
         answerResult.textContent = "";
         answerResult.hidden = true;
         answerResult.classList.remove("error");
-
+        hazardExplanation.hidden = true;
         feedbackContinue.hidden = true;
-        feedbackContinue.textContent = "ממשיכים לחפש ←";
 
-        if (data.hazard) {
-            setText(feedbackTag, "זיהיתם מפגע");
-            questionArea.hidden = false;
+        const alreadyCorrect = learning.handled().includes(id);
+        questionArea.hidden = !data.answers || alreadyCorrect;
 
+        if (!data.answers) {
+            setAnswerResult(data.explanation);
+            feedbackContinue.hidden = false;
+        } else if (alreadyCorrect) {
+            showHazardExplanation(data);
+        } else {
             data.answers.forEach((answer, index) => {
                 const option = document.createElement("button");
-
                 option.type = "button";
                 option.className = "answer-button";
                 option.textContent = answer;
-
-                option.addEventListener("click", () => {
-                    checkAnswer(index, option);
-                });
-
+                option.addEventListener("click", () => checkGameAnswer(id, index, option));
                 answerOptions.appendChild(option);
             });
 
-        } else {
-            setText(feedbackTag, "בדיקת חפץ בטוח");
-            questionArea.hidden = true;
-
-            setAnswerResult(data.explanation);
-            feedbackContinue.hidden = false;
+            if (state.reviewedHazards.has(id)) {
+                showHazardExplanation(data);
+            }
         }
 
         overlay.hidden = false;
         document.body.classList.add("dialog-open");
-
-        // Prevent the background from jumping when dialog opens.
         focusWithoutScroll(feedbackTitle);
     }
 
-    function checkAnswer(index, selectedButton) {
-        const id = state.currentObject;
-        const data = objects[id];
-
-        if (!data || !data.hazard) return;
-
-        if (!window.RogumLearning.check(`game_${id}`, String.fromCharCode(97 + index))) return;
-
-        if (index !== data.correct) {
-
-            selectedButton.classList.add("wrong");
-            selectedButton.disabled = true;
-
-            setAnswerResult(
-                "לא בדיוק. חשבו כיצד אפשר למנוע פגיעה ולשמור על המשתתפים. נסו שוב.",
-                "error"
-            );
-
-            return;
-        }
-
-        selectedButton.classList.add("correct");
-
-        answerOptions.querySelectorAll("button").forEach((button) => {
-            button.disabled = true;
-        });
-
-        const earned = window.RogumLearning.points(`game_${id}`);
-
-        if (!state.found.has(id)) {
-            state.found.add(id);
-            state.score += earned;
-        }
-
-        if (state.currentButton) {
-            state.currentButton.classList.add("found");
-
-            const original = state.currentButton.dataset.originalLabel ||
-                state.currentButton.getAttribute("aria-label") ||
-                data.title;
-
-            state.currentButton.setAttribute(
-                "aria-label",
-                `${original} - טופל`
-            );
-        }
-
-        setText(feedbackTag, "המפגע טופל בהצלחה");
-
-        setAnswerResult(
-            `${data.explanation} נוספו ${earned} נקודות!`
-        );
-
-        feedbackContinue.hidden = false;
-
-        if (state.found.size === totalHazards) {
-            feedbackContinue.textContent = "מסיימים את משימת החדר ←";
-        }
-
-        updateProgress();
-        focusWithoutScroll(feedbackContinue);
-    }
-
-    function hideHandledObject(button) {
-        if (!button) return;
-
-        button.classList.add("found", "is-handled");
-        button.disabled = true;
-        button.setAttribute("aria-hidden", "true");
-    }
-
-    function closeFeedback() {
+    function closeFeedback(confirmReview = false) {
         if (overlay.hidden) return;
 
-        const handled = state.found.has(state.currentObject);
-        const previous = state.previousFocus;
+        if (confirmReview && !hazardExplanation.hidden) {
+            state.reviewedHazards.add(state.currentObject);
+        }
 
+        const previous = state.previousFocus;
+        state.currentObject = null;
+        state.previousFocus = null;
         overlay.hidden = true;
         document.body.classList.remove("dialog-open");
 
-        if (handled) {
-            hideHandledObject(state.currentButton);
-        }
-
-        state.currentObject = null;
-        state.currentButton = null;
-        state.previousFocus = null;
-
-        if (state.found.size === totalHazards) {
-            setText(transitionScore, state.score);
-            unlock("assessment");
-            showScreen("transition");
-            return;
-        }
-
-        // Restore focus without scrolling the room to the top.
-        if (previous && !previous.disabled && previous.isConnected) {
-            focusWithoutScroll(previous);
-        } else {
-            focusWithoutScroll(titles.game);
-        }
+        renderReviewedObjects();
+        syncRoomClock();
+        learning.save();
+        focusWithoutScroll(previous || screens.game[1]);
     }
 
     roomButtons.forEach((button) => {
-        const original = button.getAttribute("aria-label") || "";
-        button.dataset.originalLabel = original;
-
-        button.addEventListener("click", () => {
-            openFeedback(button.dataset.object, button);
-        });
+        button.dataset.originalLabel = button.getAttribute("aria-label");
+        button.addEventListener("click", () => openFeedback(button.dataset.object, button));
     });
 
-    feedbackContinue?.addEventListener("click", closeFeedback);
-    feedbackClose?.addEventListener("click", closeFeedback);
-
-    // ==========================================
-    // KEYBOARD ACCESSIBILITY
-    // ==========================================
+    feedbackContinue.addEventListener("click", () => closeFeedback(true));
+    $("closeFeedbackBtn").addEventListener("click", () => closeFeedback());
 
     document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-            if (overlay && !overlay.hidden) {
-                event.preventDefault();
-                closeFeedback();
-                return;
-            }
+        if (event.key !== "Escape") return;
 
-            if (navigation?.classList.contains("is-open")) {
-                closeNavigation();
-                focusWithoutScroll(navToggle);
-            }
+        if (!overlay.hidden) {
+            event.preventDefault();
+            closeFeedback();
+        } else if (navigation.classList.contains("is-open")) {
+            setNavigationOpen(false);
+            focusWithoutScroll(navToggle);
         }
     });
 
-    overlay?.addEventListener("keydown", (event) => {
+    // Keep Tab inside the feedback window until it is closed.
+    overlay.addEventListener("keydown", (event) => {
         if (event.key !== "Tab") return;
 
-        const focusable = visibleFocusableElements(overlay);
-        if (!focusable.length) return;
-
+        const focusable = [...overlay.querySelectorAll("button:not([disabled])")]
+            .filter((button) => button.getClientRects().length > 0);
         const first = focusable[0];
-        const last = focusable[focusable.length - 1];
+        const last = focusable.at(-1);
+        const active = document.activeElement;
 
-        if (event.shiftKey && document.activeElement === first) {
+        if (event.shiftKey && (active === first || !focusable.includes(active))) {
             event.preventDefault();
             focusWithoutScroll(last);
-        } else if (
-            !event.shiftKey &&
-            document.activeElement === last
-        ) {
+        } else if (!event.shiftKey && active === last) {
             event.preventDefault();
             focusWithoutScroll(first);
         }
     });
 
-    // ==========================================
-    // ASSESSMENT HELPERS
-    // ==========================================
-
-    function setQuestionFeedback(element, type, message) {
-        if (!element) return;
-
-        element.textContent = message;
-        element.hidden = false;
-
-        element.classList.remove(
-            "correct",
-            "partial",
-            "incorrect",
-            "missing"
-        );
-
-        element.classList.add(type);
-        element.setAttribute("role", "status");
+    function setQuestionFeedback(index, type, message) {
+        const feedback = questionFeedback[index];
+        feedback.classList.remove("correct", "partial", "incorrect", "missing");
+        feedback.classList.add(type);
+        feedback.textContent = message;
+        feedback.hidden = false;
     }
 
     function clearAssessmentFeedback() {
-        questionFeedback.forEach((element) => {
-            if (!element) return;
-
-            element.hidden = true;
-            element.textContent = "";
-
-            element.classList.remove(
-                "correct",
-                "partial",
-                "incorrect",
-                "missing"
-            );
+        questionFeedback.forEach((feedback) => {
+            feedback.hidden = true;
+            feedback.textContent = "";
         });
 
         assessmentSummary.hidden = true;
         assessmentSummary.textContent = "";
         assessmentSummary.classList.remove("all-correct");
-
-        finishAssessment.hidden = true;
         checkAssessment.hidden = false;
-
+        finishAssessment.hidden = true;
         state.assessmentCompleted = false;
     }
 
-    // ==========================================
-    // FINAL ASSESSMENT
-    // ==========================================
+    function getDraft() {
+        return {
+            q1: question1Inputs.find((input) => input.checked)?.value || "",
+            q2: question2Inputs.filter((input) => input.checked).map((input) => input.value),
+            q3: question3Input.value.slice(0, 32)
+        };
+    }
 
-    assessmentForm?.addEventListener("submit", (event) => {
+    function correctActionSelection(values) {
+        return values.length === correctActions.length &&
+            correctActions.every((value) => values.includes(value));
+    }
+
+    function showAssessmentSummary(message, checked) {
+        state.assessmentCompleted = checked;
+        assessmentSummary.textContent = message;
+        assessmentSummary.hidden = false;
+        assessmentSummary.classList.toggle("all-correct", checked);
+        checkAssessment.hidden = checked;
+        finishAssessment.hidden = !checked;
+    }
+
+    assessmentForm.addEventListener("submit", (event) => {
         event.preventDefault();
+        if (state.screen !== "assessment" || !assessmentIsAvailable()) return;
 
-        const selectedQ1 = assessmentForm.querySelector(
-            'input[name="question1"]:checked'
-        );
+        const { q1, q2, q3 } = getDraft();
+        const q3Value = Number(q3);
+        const q3Valid = q3 !== "" && question3Input.validity.valid &&
+            Number.isInteger(q3Value) && q3Value >= 1 && q3Value <= 10;
 
-        const selectedQ2 = [
-            ...assessmentForm.querySelectorAll(
-                'input[name="question2"]:checked'
-            )
-        ].map((input) => input.value);
+        const q1Correct = q1 === "b";
+        const q2Correct = correctActionSelection(q2);
+        const q3Correct = q3Valid && q3Value === 3;
+        const correctCount = [q1Correct, q2Correct, q3Correct].filter(Boolean).length;
+        const missingCount = [!q1, q2.length === 0, q3 === ""].filter(Boolean).length;
 
-        const q3 = question3Input.value.trim();
-
-        let correctCount = 0;
-        let missingCount = 0;
-
-        // Question 1 — single choice
-
-        if (!selectedQ1) {
-            missingCount++;
-
-            setQuestionFeedback(
-                questionFeedback[0],
-                "missing",
-                "עדיין לא בחרתם תשובה לשאלה הזאת."
-            );
-
-        } else if (selectedQ1.value === "b") {
-            correctCount++;
-
-            setQuestionFeedback(
-                questionFeedback[0],
-                "correct",
-                "נכון! ציוד שאינו תקין מוציאים משימוש, מונעים גישה אליו ומדווחים לרכז."
-            );
-
+        if (!q1) {
+            setQuestionFeedback(0, "missing", "עדיין לא נבחרה תשובה לשאלה הזאת.");
+        } else if (q1Correct) {
+            setQuestionFeedback(0, "correct",
+                "נכון! ציוד שאינו תקין מוציאים משימוש, מונעים גישה אליו ומדווחים לרכז.");
         } else {
-            setQuestionFeedback(
-                questionFeedback[0],
-                "incorrect",
-                "לא בדיוק. מוציאים ציוד לא תקין משימוש ומדווחים לרכז. אין לנסות לתקן אותו בעצמנו."
-            );
+            setQuestionFeedback(0, "incorrect",
+                "לא בדיוק. מוציאים ציוד לא תקין משימוש ומדווחים לרכז. אין לנסות לתקן אותו באופן עצמאי.");
         }
 
-        // Question 2 — multiple choice
-
-        const correctValues = ["stop", "move", "report"];
-
-        const correctSelections = selectedQ2.filter((value) => {
-            return correctValues.includes(value);
-        }).length;
-
-        const incorrectSelections = selectedQ2.filter((value) => {
-            return !correctValues.includes(value);
-        }).length;
-
-        const q2Correct =
-            correctSelections === correctValues.length &&
-            incorrectSelections === 0;
-
-        if (selectedQ2.length === 0) {
-            missingCount++;
-
-            setQuestionFeedback(
-                questionFeedback[1],
-                "missing",
-                "סמנו לפחות פעולה אחת לפני בדיקת התשובות."
-            );
-
+        if (q2.length === 0) {
+            setQuestionFeedback(1, "missing", "יש לבחור לפחות פעולה אחת לפני בדיקת התשובות.");
         } else if (q2Correct) {
-            correctCount++;
-
-            setQuestionFeedback(
-                questionFeedback[1],
-                "correct",
-                "מצוין! עוצרים את הפעילות באזור המסוכן, מרחיקים את החניכים ומדווחים לרכז."
-            );
-
-        } else if (correctSelections > 0) {
-            setQuestionFeedback(
-                questionFeedback[1],
-                "partial",
-                "כמעט! בדקו אם בחרתם את כל הפעולות המתאימות ואם סימנתם פעולה שאינה בטוחה."
-            );
-
+            setQuestionFeedback(1, "correct",
+                "מצוין! עוצרים את הפעילות באזור המסוכן, מרחיקים את המשתתפים ומדווחים לרכז.");
+        } else if (q2.some((value) => correctActions.includes(value))) {
+            setQuestionFeedback(1, "partial",
+                "כמעט! כדאי לבדוק אם נבחרו כל הפעולות המתאימות ואם סומנה פעולה שאינה בטוחה.");
         } else {
-            setQuestionFeedback(
-                questionFeedback[1],
-                "incorrect",
-                "חשבו על שלוש הפעולות המרכזיות: עצירה, הרחקה ודיווח."
-            );
+            setQuestionFeedback(1, "incorrect",
+                "כדאי לחשוב על שלוש הפעולות המרכזיות: עצירה, הרחקה ודיווח.");
         }
-
-        // Question 3 — numeric answer
 
         if (q3 === "") {
-            missingCount++;
-
-            setQuestionFeedback(
-                questionFeedback[2],
-                "missing",
-                "הקלידו את מספר הפעולות המרכזיות."
-            );
-
-        } else if (
-            !question3Input.validity.valid ||
-            !Number.isInteger(Number(q3)) ||
-            Number(q3) < 1 ||
-            Number(q3) > 10
-        ) {
-            setQuestionFeedback(
-                questionFeedback[2],
-                "incorrect",
-                "יש להזין מספר שלם בין 1 ל־10."
-            );
-
-        } else if (Number(q3) === 3) {
-            correctCount++;
-
-            setQuestionFeedback(
-                questionFeedback[2],
-                "correct",
-                "נכון! שלוש הפעולות הן עצירת הפעילות, הרחקת החניכים ודיווח לרכז."
-            );
-
+            setQuestionFeedback(2, "missing", "יש להזין את מספר הפעולות המרכזיות.");
+        } else if (!q3Valid) {
+            setQuestionFeedback(2, "incorrect", "יש להזין מספר שלם בין 1 ל־10.");
+        } else if (q3Correct) {
+            setQuestionFeedback(2, "correct",
+                "נכון! שלוש הפעולות הן עצירת הפעילות, הרחקת המשתתפים ודיווח לרכז.");
         } else {
-            setQuestionFeedback(
-                questionFeedback[2],
-                "incorrect",
-                "לא בדיוק. חזרו לשלוש הפעולות: עצירה, הרחקה ודיווח."
-            );
+            setQuestionFeedback(2, "incorrect",
+                "לא בדיוק. כדאי לחזור לשלוש הפעולות: עצירה, הרחקה ודיווח.");
         }
 
-        // Report only valid answers; repeated unchanged checks are deduplicated.
-        if (selectedQ1) window.RogumLearning.check("assessment_equipment", selectedQ1.value);
-        if (selectedQ2.length) {
-            const codes = { stop: "a", move: "b", child: "c", report: "d" };
-            window.RogumLearning.check("assessment_actions", selectedQ2.map(value => codes[value]).sort().join(","));
+        // Send only answers we can score. Blank or invalid fields stay out of the report.
+        const responses = [];
+        if (q1) responses.push(["assessment_equipment", q1]);
+        if (q2.length) {
+            const codes = q2.map((value) => actionCodes[value]).sort().join(",");
+            responses.push(["assessment_actions", codes]);
         }
-        if (q3 !== "" && question3Input.validity.valid && Number.isInteger(Number(q3)) && Number(q3) >= 1 && Number(q3) <= 10) {
-            window.RogumLearning.check("assessment_steps", String(Number(q3)));
-        }
-        setText($("assessmentPoints"), window.RogumLearning.assessmentPoints());
+        if (q3Valid) responses.push(["assessment_steps", String(q3Value)]);
 
-        // Summary
+        const allAccepted = responses.map(([id, response]) => learning.check(id, response)).every(Boolean);
+        $("assessmentPoints").textContent = learning.assessmentPoints();
 
-        assessmentSummary.hidden = false;
-        assessmentSummary.classList.remove("all-correct");
-
-        if (missingCount > 0) {
-            assessmentSummary.textContent =
-                `עניתם נכון על ${correctCount} מתוך 3 שאלות. ` +
-                `נותרו ${missingCount} שאלות שלא הושלמו.`;
-
+        if (!allAccepted) {
+            showAssessmentSummary("חלק מהתשובות לא נקלטו. אפשר לנסות לבדוק אותן שוב.", false);
         } else if (correctCount === 3) {
-            state.assessmentCompleted = true;
-
-            assessmentSummary.classList.add("all-correct");
-
-            assessmentSummary.textContent =
-                "כל הכבוד! עניתם נכון על כל שלוש השאלות והשלמתם את משימת הבטיחות.";
-
-            checkAssessment.hidden = true;
-            finishAssessment.hidden = false;
-
+            showAssessmentSummary("כל הכבוד! כל שלוש השאלות נענו נכון. אפשר לסיים את היחידה.", true);
+        } else if (missingCount > 0) {
+            showAssessmentSummary(
+                `מספר התשובות הנכונות: ${correctCount} מתוך 3. שאלות שטרם הושלמו: ${missingCount}.`,
+                false
+            );
         } else {
-            assessmentSummary.textContent =
-                `עניתם נכון על ${correctCount} מתוך 3 שאלות. ` +
-                "קראו את המשוב, תקנו את התשובות ונסו שוב.";
+            showAssessmentSummary(
+                `מספר התשובות הנכונות: ${correctCount} מתוך 3. כדאי לקרוא את המשוב ולנסות שוב.`,
+                false
+            );
         }
 
-        assessmentSummary.setAttribute("tabindex", "-1");
+        assessmentSummary.tabIndex = -1;
         focusWithoutScroll(assessmentSummary);
-
-        assessmentSummary.scrollIntoView({
-            behavior: "auto",
-            block: "nearest"
-        });
-        window.RogumLearning.save();
+        assessmentSummary.scrollIntoView({ behavior: "auto", block: "nearest" });
+        learning.save();
     });
 
-    assessmentForm?.addEventListener("change", () => {
+    function onAssessmentEdited() {
         clearAssessmentFeedback();
-        window.RogumLearning.save();
-    });
-
-    question3Input?.addEventListener("input", () => {
-        clearAssessmentFeedback();
-        window.RogumLearning.save();
-    });
-
-    $("backToGameBtn")?.addEventListener("click", () => {
-        showScreen("transition");
-    });
-
-    finishAssessment?.addEventListener("click", () => {
-        if (!state.assessmentCompleted) return;
-        if (!window.RogumLearning.complete()) return;
-
-        setText(completionScore, state.score + window.RogumLearning.assessmentPoints());
-        showScreen("completion");
-    });
-
-    // ==========================================
-    // RESET
-    // ==========================================
-
-    function resetAssessment() {
-        assessmentForm?.reset();
-        clearAssessmentFeedback();
-        state.assessmentVisited = false;
+        learning.save();
     }
 
-    function resetGame() {
-        state.found.clear();
-        state.score = 0;
-        state.currentObject = null;
-        state.currentButton = null;
-        state.previousFocus = null;
+    assessmentForm.addEventListener("change", (event) => {
+        if (event.target !== question3Input) onAssessmentEdited();
+    });
+    question3Input.addEventListener("input", onAssessmentEdited);
 
-        roomButtons.forEach((button) => {
-            button.classList.remove("found", "is-handled");
+    finishAssessment.addEventListener("click", () => {
+        if (state.screen !== "assessment" ||
+            !assessmentIsAvailable() ||
+            !state.assessmentCompleted) {
+            return;
+        }
 
-            button.style.opacity = "";
-            button.style.transform = "";
-            button.style.transition = "";
-            button.style.pointerEvents = "";
+        if (learning.complete()) showScreen("completion");
+    });
 
-            button.disabled = false;
-            button.removeAttribute("aria-hidden");
+    $("restartBtn").addEventListener("click", () => {
+        if (!learning.beginPractice()) return;
 
-            button.setAttribute(
-                "aria-label",
-                button.dataset.originalLabel || ""
-            );
-        });
-
-        overlay.hidden = true;
-        document.body.classList.remove("dialog-open");
-
-        setText(transitionScore, "0");
-        setText(completionScore, "0");
-
-        resetAssessment();
-        updateProgress();
-    }
-
-    $("restartBtn")?.addEventListener("click", () => {
-        if (!window.RogumLearning.beginPractice()) return;
-        setText($("assessmentPoints"), "60");
-        resetGame();
+        state.highestUnlocked = navigationOrder.indexOf("game");
         state.gameStarted = true;
+        state.reviewedHazards.clear();
+        state.activeRoomMs = 0;
+        state.roomStartedAt = null;
+        state.lastSavedRoomMs = 0;
+        state.assessmentVisited = false;
+
+        assessmentForm.reset();
+        clearAssessmentFeedback();
+        $("assessmentPoints").textContent = learning.assessmentPoints();
+
+        renderReviewedObjects();
         showScreen("game");
     });
 
-    // ==========================================
-    // INITIALIZATION
-    // ==========================================
+    const restored = learning.restored();
+    let initialScreen = restored?.screen || "welcome";
 
-    resetGame();
-    const restored = window.RogumLearning.restored();
     if (restored) {
-        state.highestUnlocked = restored.highestUnlocked;
+        state.highestUnlocked = Math.min(
+            restored.highestUnlocked,
+            navigationOrder.indexOf("game")
+        );
         state.gameStarted = restored.gameStarted;
         state.assessmentVisited = restored.assessmentVisited;
-        state.found = new Set(window.RogumLearning.handled());
-        state.score = [...state.found].reduce((sum, id) => sum + window.RogumLearning.points(`game_${id}`), 0);
-        roomButtons.forEach(button => {
-            if (state.found.has(button.dataset.object)) hideHandledObject(button);
-        });
-        assessmentForm.querySelectorAll('input[name="question1"]').forEach(input => { input.checked = input.value === restored.q1; });
-        assessmentForm.querySelectorAll('input[name="question2"]').forEach(input => { input.checked = restored.q2.includes(input.value); });
-        question3Input.value = restored.q3;
-        // Revalidate without re-submitting or duplicating interaction records.
-        const correctDraft = restored.q1 === "b" && restored.q2.length === 3 &&
-            ["stop", "move", "report"].every(value => restored.q2.includes(value)) && Number(restored.q3) === 3;
-        state.assessmentCompleted = restored.checked && correctDraft;
-        finishAssessment.hidden = !state.assessmentCompleted;
-        checkAssessment.hidden = state.assessmentCompleted;
-        if (state.assessmentCompleted) {
-            assessmentSummary.hidden = false;
-            assessmentSummary.classList.add("all-correct");
-            assessmentSummary.textContent = "התשובות הנכונות שוחזרו. אפשר לסיים את היחידה.";
+
+        // Before we tracked reviews, a correct answer was how we marked a hazard as reviewed.
+        const savedHazards = Array.isArray(restored.reviewedHazards)
+            ? restored.reviewedHazards
+            : learning.handled();
+
+        state.reviewedHazards = new Set(
+            savedHazards.filter((id) => hazardIds.includes(id))
+        );
+
+        if (Number.isFinite(restored.activeRoomMs)) {
+            state.activeRoomMs = Math.min(requiredRoomMs, Math.max(0, restored.activeRoomMs));
         }
-        setText($("assessmentPoints"), window.RogumLearning.assessmentPoints());
-        setText(transitionScore, state.score);
-        setText(completionScore, state.score + window.RogumLearning.assessmentPoints());
-        updateProgress();
+        state.lastSavedRoomMs = state.activeRoomMs;
+
+        question1Inputs.forEach((input) => {
+            input.checked = input.value === restored.q1;
+        });
+        question2Inputs.forEach((input) => {
+            input.checked = restored.q2.includes(input.value);
+        });
+        question3Input.value = restored.q3;
+
+        const draft = getDraft();
+        if (restored.checked && draft.q1 === "b" &&
+            correctActionSelection(draft.q2) && Number(draft.q3) === 3) {
+            showAssessmentSummary("התשובות הנכונות שוחזרו. אפשר לסיים את היחידה.", true);
+        }
     }
-    window.RogumLearning.bind(() => ({
+
+    if (learning.isDone()) {
+        initialScreen = "completion";
+    } else if (!assessmentIsAvailable() && assessmentScreens.includes(initialScreen)) {
+        initialScreen = "game";
+    }
+
+    // Give lms.js the room progress and the current quiz answers for the next save.
+    learning.bind(() => ({
         screen: state.screen,
-        highestUnlocked: state.highestUnlocked,
+        highestUnlocked: assessmentIsAvailable()
+            ? navigationOrder.indexOf("assessment")
+            : state.highestUnlocked,
         gameStarted: state.gameStarted,
         assessmentVisited: state.assessmentVisited,
         checked: state.assessmentCompleted,
-        q1: assessmentForm.querySelector('input[name="question1"]:checked')?.value || "",
-        q2: [...assessmentForm.querySelectorAll('input[name="question2"]:checked')].map(input => input.value),
-        q3: question3Input.value.slice(0, 32)
+        reviewedHazards: [...state.reviewedHazards],
+        activeRoomMs: Math.floor(elapsedRoomMs()),
+        ...getDraft()
     }));
-    updateNavigation();
-    let initialScreen = restored?.screen || "welcome";
-    if (state.found.size === totalHazards && initialScreen === "game") {
-        state.highestUnlocked = 4;
-        initialScreen = "transition";
-    }
-    if (window.RogumLearning.isDone()) initialScreen = "completion";
+
+    renderReviewedObjects();
+    $("assessmentPoints").textContent = learning.assessmentPoints();
     showScreen(initialScreen);
 });
